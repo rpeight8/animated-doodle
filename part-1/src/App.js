@@ -34,9 +34,10 @@ const App = () => {
       >
         bad
       </Button>
-      <h1>statistic</h1>
       <Statistic
         good={good}
+        neutral={neutral}
+        bad={bad}
         average={(good + bad * -1) / sum}
         positive={(100 * good) / sum}
       >

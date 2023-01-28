@@ -1,20 +1,47 @@
+import StatisticLine from "./StatisticLine";
+
 const Statistic = ({ good, neutral, bad, average, positive }) => {
   if (!good && !neutral && !bad) {
     return <span>No feedback given</span>;
   }
 
   return (
-    <div>
-      <span>Good: {good}</span>
-      <br></br>
-      <span>Neutral: {neutral}</span>
-      <br></br>
-      <span>Bad: {bad}</span>
-      <br></br>
-      <span>Average: {average}</span>
-      <br></br>
-      <span>Postitive: {positive}</span>
-    </div>
+    <>
+      <h1>Statistics</h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <StatisticLine text="Good" value={good}></StatisticLine>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <StatisticLine text="Neutral" value={neutral}></StatisticLine>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <StatisticLine text="Bad" value={bad}></StatisticLine>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <StatisticLine text="Average" value={average}></StatisticLine>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <StatisticLine
+                text="Postitive"
+                value={positive}
+                postText="%"
+              ></StatisticLine>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </>
   );
 };
 
