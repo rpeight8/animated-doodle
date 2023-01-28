@@ -1,48 +1,58 @@
 import { useState } from "react";
-import Button from "./Button.js";
-import Statistic from "./Statistic.js";
+import Anecdote from "./Anecdote";
 
 const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
+  const getRandomAnecdoteId = () => {
+    return anecdotes[Math.floor(Math.random() * anecdotes.length)].id;
+  };
 
-  const sum = good + bad + neutral;
+  const [anecdotes, setAnecdotes] = useState([
+    {
+      id: 0,
+      text: "Anec1",
+      votes: 1,
+    },
+    {
+      id: 1,
+      text: "Anec2",
+      votes: 2,
+    },
+    {
+      id: 2,
+      text: "Anec3",
+      votes: 3,
+    },
+  ]);
+
+  const [currentAnecdoteId, setCurrentAnecdoteId] = useState(
+    getRandomAnecdoteId()
+  );
+
+  const topAnecdote = [...anecdotes].sort((a, b) => b.votes - a.votes)[0];
 
   return (
     <>
-      <h1>give feedback</h1>
-      <Button
-        handleClick={() => {
-          setGood(good + 1);
+      <Anecdote
+        text={anecdotes[currentAnecdoteId].text}
+        votes={anecdotes[currentAnecdoteId].votes}
+        onVoteHandle={() => {
+          setAnecdotes(
+            anecdotes.map((anec) => {
+              const copy = { ...anec };
+              if (copy.id === currentAnecdoteId) copy.votes++;
+              return copy;
+            })
+          );
         }}
-      >
-        good
-      </Button>
-      <Button
-        handleClick={() => {
-          setNeutral(neutral + 1);
+        onNextHandle={() => {
+          setCurrentAnecdoteId(getRandomAnecdoteId());
         }}
-      >
-        neutral
-      </Button>
-      <Button
-        handleClick={() => {
-          setBad(bad + 1);
-        }}
-      >
-        bad
-      </Button>
-      <Statistic
-        good={good}
-        neutral={neutral}
-        bad={bad}
-        average={(good + bad * -1) / sum}
-        positive={(100 * good) / sum}
-      >
-        good {good}
-      </Statistic>
+      ></Anecdote>
+      <Anecdote
+        text={topAnecdote.text}
+        votes={topAnecdote.votes}
+        type="topAnec"
+      ></Anecdote>
     </>
   );
 };
