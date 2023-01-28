@@ -8,7 +8,7 @@ const App = () => {
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
 
-	const sum = good + bad + neutral;
+  const sum = good + bad + neutral;
 
   return (
     <>
@@ -35,13 +35,13 @@ const App = () => {
         bad
       </Button>
       <h1>statistic</h1>
-      <Statistic>good {good}</Statistic>
-      <Statistic>neutral {neutral}</Statistic>
-      <Statistic>bad {bad}</Statistic>
-      <Statistic>
-        average {(good + bad * -1) / (sum) || 0}
+      <Statistic
+        good={good}
+        average={(good + bad * -1) / sum}
+        positive={(100 * good) / sum}
+      >
+        good {good}
       </Statistic>
-      <Statistic>positive {100 * good / (sum) || 0}</Statistic>
     </>
   );
 };
