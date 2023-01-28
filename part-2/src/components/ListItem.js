@@ -1,5 +1,5 @@
-const ListItem = ({ text, key }) => {
-  return <li key={key}>{text}</li>;
+const ListItem = ({ text }) => {
+  return <li>{text}</li>;
 };
 
 export default ListItem;
