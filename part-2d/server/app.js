@@ -34,16 +34,12 @@ async function main() {
 
   app.delete("/api/lines/:id", async (req, res) => {
     const id = req.params.id;
-    await Line.deleteOne({ _id: id }).then((resp) => {
-      console.log(resp);
-    });
+    await Line.deleteOne({ _id: id });
     res.status(204).end();
   });
 
   app.get("/api/lines", async (req, res) => {
-    const lines = await Line.find({}, { __cv: 0 });
-    console.log(lines);
-    res.json(lines);
+    res.json(await Line.find({}, { __cv: 0 }));
   });
 
   app.post("/api/lines", async (req, res) => {
@@ -62,8 +58,7 @@ async function main() {
         return;
       }
 
-      const sameNameLine = await Line.findOne({ name: body.name });
-      if (sameNameLine) {
+      if (await Line.findOne({ name: body.name })) {
         res.status(400).json({
           error: "Line with same name already exists",
         });
@@ -74,6 +69,7 @@ async function main() {
       await newLine.validate().catch((err) => {
         throw new Error("Fields validation error");
       });
+
       res.json(await newLine.save());
     } catch (err) {
       console.log(err);
@@ -92,9 +88,4 @@ async function main() {
   });
 }
 
-main()
-  .then(async () => {
-    // const john = new Line({ name: "John", number: 123 });
-    // await john.save();
-  })
-  .catch((err) => console.log(err));
+main().catch((err) => console.log(err));
