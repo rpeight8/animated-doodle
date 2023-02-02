@@ -1,10 +1,35 @@
-const { response } = require("express");
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
 
 const { Line } = require("./models/line.js");
 
 const app = express();
+app.use(express.json());
+// app.use(morgan(":method :url :status :response-time ms :req[body]"));
+morgan.token("data", function (req, res) {
+  return JSON.stringify(req.body);
+});
+app.use(
+  morgan(
+    function (tokens, req, res) {
+      return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        "response-time",
+        tokens.data(req, res),
+      ].join(" ");
+    },
+    {
+      stream: fs.createWriteStream(path.join(__dirname, "requests.log"), {
+        flags: "a",
+      }),
+    }
+  )
+);
 
 mongoose.set("strictQuery", false);
 const mongoDB = "mongodb://127.0.0.1/phoneBookDB";
@@ -18,7 +43,6 @@ async function main() {
     res.append("Access-Control-Allow-Headers", "Content-Type");
     next();
   });
-  app.use(express.json());
 
   app.get("/api/lines/:id", async (req, res) => {
     const id = req.params.id;
@@ -42,7 +66,7 @@ async function main() {
     res.json(await Line.find({}, { __cv: 0 }));
   });
 
-  app.post("/api/lines", async (req, res) => {
+  app.post("/api/lines", async (req, res, next) => {
     try {
       const body = req.body;
       if (!body) {
