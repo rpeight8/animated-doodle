@@ -18,6 +18,7 @@ async function main() {
     res.append("Access-Control-Allow-Headers", "Content-Type");
     next();
   });
+  app.use(express.json());
 
   app.get("/api/lines/:id", async (req, res) => {
     const id = req.params.id;
@@ -31,10 +32,59 @@ async function main() {
     }
   });
 
+  app.delete("/api/lines/:id", async (req, res) => {
+    const id = req.params.id;
+    await Line.deleteOne({ _id: id }).then((resp) => {
+      console.log(resp);
+    });
+    res.status(204).end();
+  });
+
   app.get("/api/lines", async (req, res) => {
     const lines = await Line.find({}, { __cv: 0 });
     console.log(lines);
     res.json(lines);
+  });
+
+  app.post("/api/lines", async (req, res) => {
+    try {
+      const body = req.body;
+      if (!body) {
+        res.status(400).json({
+          error: "content missing",
+        });
+        return;
+      }
+      if (!body.name || !body.number) {
+        res.status(400).json({
+          error: "Missing fields",
+        });
+        return;
+      }
+
+      const sameNameLine = await Line.findOne({ name: body.name });
+      if (sameNameLine) {
+        res.status(400).json({
+          error: "Line with same name already exists",
+        });
+        return;
+      }
+
+      const newLine = new Line(body);
+      await newLine.validate().catch((err) => {
+        throw new Error("Fields validation error");
+      });
+      res.json(await newLine.save());
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        error: err.message || "Iternal server error",
+      });
+    }
+  });
+
+  app.get("/api/info", async (req, res) => {
+    res.json(await Line.countDocuments({}));
   });
 
   app.listen(3001, function () {
