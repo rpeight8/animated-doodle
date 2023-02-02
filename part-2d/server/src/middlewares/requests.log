@@ -18,3 +18,7 @@ GET /api/lines/63db4dce10b945b93b0af172 200 response-time {"name":"John2222222",
 GET /api/lines/63db4dce10b945b93b0af17 500 response-time {"name":"John2222222","number":"a"}
 GET /api/info 200 response-time {"name":"John2222222","number":"a"}
 GET /api/info 200 response-time {"name":"John2222222","number":"a"}
+GET /api/info 200 response-time {"name":"John2222222","number":"a"}
+GET /api/info 200 response-time {"name":"John2222222","number":"a"}
+GET /api/info 500 response-time {"name":"John2222222","number":"a"}
+GET /api/info 200 response-time {"name":"John2222222","number":"a"}

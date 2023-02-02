@@ -1,16 +1,14 @@
 const dotenv = require("dotenv").config();
 const port = process.env.PORT || 3001;
+const connectDB = require("./config/db.js");
 const express = require("express");
 const mongoose = require("mongoose");
 const { errorHandler } = require("./middlewares/error.middleware.js");
 const { cors } = require("./middlewares/cors.middleware.js");
 const { logger } = require("./middlewares/logging.middleware.js");
 
-mongoose.set("strictQuery", false);
-const mongoDB = "mongodb://127.0.0.1/phoneBookDB";
-
 async function main() {
-  await mongoose.connect(mongoDB);
+  await connectDB();
   const app = express();
   app.use(express.json());
   app.use(cors);
@@ -24,4 +22,4 @@ async function main() {
   });
 }
 
-main().catch((err) => console.log(err));
+main().catch((err) => console.log("AHAHA"));
