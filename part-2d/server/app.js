@@ -19,8 +19,20 @@ async function main() {
     next();
   });
 
+  app.get("/api/lines/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+      const line = await Line.findById(id, { __v: 0 });
+      res.json(line);
+    } catch (err) {
+      console.log(err);
+      res.statusMessage = "Resource was not found";
+      res.status(404).end();
+    }
+  });
+
   app.get("/api/lines", async (req, res) => {
-    const lines = await Line.find({}, { __v: 0 });
+    const lines = await Line.find({}, { __cv: 0 });
     console.log(lines);
     res.json(lines);
   });
