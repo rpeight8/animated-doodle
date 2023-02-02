@@ -12,7 +12,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await ky.get("http://localhost:3001/data").json();
+      const data = await ky.get("http://localhost:3001/api/lines").json();
       setPersons(data);
     };
 
