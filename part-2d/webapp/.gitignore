@@ -25,3 +25,4 @@ yarn-error.log*
 **/.env
 **/requests.json
 **/requests.log
+requests.log
