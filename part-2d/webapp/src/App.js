@@ -37,19 +37,26 @@ const App = () => {
     });
   };
 
-  const onAddClick = (event) => {
+  const onAddClick = async (event) => {
     event.preventDefault();
-    if (!isUnique(newName, newNumber)) {
-      alert(`${newName} already exists`);
-      return;
-    }
 
-    setPersons(
-      persons.concat({
-        name: newName,
-        number: newNumber,
-      })
-    );
+    try {
+      await ky.post("http://localhost:3001/api/lines", {
+        json: {
+          name: newName,
+          number: newNumber,
+        },
+      });
+
+      setPersons(
+        persons.concat({
+          name: newName,
+          number: newNumber,
+        })
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

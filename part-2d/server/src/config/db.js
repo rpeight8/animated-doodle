@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
+const MONGO_URI =
+  process.env.MONGO_URI || "mongodb://localhost:27017/phoneBookDB";
 
 const connectDB = async () => {
   try {
-    const connection = await mongoose.connect(process.env.MONGO_URI, {
+    console.log(MONGO_URI);
+    const connection = await mongoose.connect(MONGO_URI, {
       // useNewUrlParser: true,
       // useCreateIndex: true,
       // useFindAndModify: false,

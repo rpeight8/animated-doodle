@@ -1,6 +1,6 @@
 {
   "scripts": {
-	"start": "node ./src/app.js",
+    "start": "node ./src/app.js",
     "dev": "nodemon ./src/app.js"
   },
   "dependencies": {
@@ -13,7 +13,7 @@
   },
   "name": "animated-doodle",
   "version": "1.0.0",
-  "main": "./src/app.js",
+  "main": "./src/public/index.html",
   "devDependencies": {},
   "repository": {
     "type": "git",
