@@ -10,10 +10,10 @@ const path = require("path");
 async function main() {
   const app = express();
   await connectDB();
-  app.use(express.json());
   app.use(cors);
-  app.use(logger);
   app.use("/", express.static(path.join(__dirname, "public")));
+  app.use(express.json());
+  app.use(logger);
   app.use("/api/lines", require("./routes/line.routes.js"));
   app.use("/api/info", require("./routes/info.routes.js"));
   app.use(errorHandler);
