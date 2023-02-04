@@ -12,7 +12,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await ky.get("http://localhost:3001/api/lines").json();
+      const data = await ky.get("/api/lines").json();
       setPersons(data);
     };
 
@@ -41,7 +41,7 @@ const App = () => {
     event.preventDefault();
 
     try {
-      await ky.post("http://localhost:3001/api/lines", {
+      await ky.post("/api/lines", {
         json: {
           name: newName,
           number: newNumber,
