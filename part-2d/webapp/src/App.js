@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddForm from "./components/AddForm";
 import Input from "./components/Input";
 import List from "./components/List";
+import Error from "./components/Error";
 import ky from "ky";
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchString, setSearchString] = useState("");
+  const [error, setError] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,13 +70,18 @@ const App = () => {
       setNewNumber("");
       const data = await ky.get("/api/lines").json();
       setPersons(data);
+      setError({});
     } catch (error) {
-      console.error(error);
+      if (error.name === "HTTPError") {
+        const errorJson = await error.response.json();
+        setError(errorJson);
+      }
     }
   };
 
   return (
     <div>
+      {error.message && <Error error={error}></Error>}
       <h2>Phonebook</h2>
       <div>
         <Input labelText="search for" onEditHandle={onNameSearch}></Input>

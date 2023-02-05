@@ -25,21 +25,13 @@ const deleteLine = asyncHandler(async (req, res) => {
 
 const addLine = asyncHandler(async (req, res) => {
   const body = req.body;
-  if (!body || !body.name || !body.number) {
-    res.status(400);
-    throw new Error("Content missing");
-  }
 
-  if (await Line.findOne({ name: body.name })) {
+  if (await Line.findOne({ name: body?.name })) {
     res.status(400);
     throw new Error("Same person already exists");
   }
 
   const newLine = new Line(body);
-  await newLine.validate().catch((err) => {
-    res.status(400);
-    throw new Error("Fields validation error");
-  });
 
   res.json(await newLine.save());
 });
@@ -49,14 +41,14 @@ const countLines = asyncHandler(async (req, res) => {
 });
 
 const updateLine = asyncHandler(async (req, res) => {
-  const id = req.params.id;
-  const body = req.body;
-  if (!body || !body.name || !body.number || !id) {
-    res.status(400);
-    throw new Error("Content missing");
-  }
+  const id = req?.params?.id;
+  const body = req?.body;
 
-  await Line.findByIdAndUpdate(id, body, { new: true }).then((line) => {
+  await Line.findByIdAndUpdate(id, body, {
+    runValidators: true,
+    new: true,
+    context: "query",
+  }).then((line) => {
     if (!line) {
       res.status(404);
       throw new Error("Resource was not found");

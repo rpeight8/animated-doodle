@@ -4,13 +4,22 @@ const LineSchema = new mongoose.Schema({
   name: {
     type: String,
     index: true,
+    required: [true, "Person name required"],
   },
-  number: Number,
+  number: {
+    type: String,
+    required: [true, "Person phone number required"],
+    validate: {
+      validator: function (v) {
+        return /^\d{2,3}-\d+$/.test(v);
+      },
+      message: (props) => `${props.value} is not a valid phone number!`,
+    },
+  },
 });
 
 LineSchema.set("toJSON", {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
     delete returnedObject.__v;
   },
 });
