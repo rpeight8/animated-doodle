@@ -2,7 +2,7 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 
-morgan.token("data", function (req, res) {
+morgan.token("data", function (req) {
   return JSON.stringify(req.body);
 });
 

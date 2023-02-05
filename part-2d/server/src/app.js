@@ -1,3 +1,4 @@
+/* eslint-disable-next-line no-unused-vars */
 const dotenv = require("dotenv").config();
 const port = process.env.PORT || 3001;
 const connectDB = require("./config/db.js");
@@ -23,4 +24,4 @@ async function main() {
   });
 }
 
-main().catch((err) => console.log("AHAHA"));
+main().catch((err) => console.log(err));

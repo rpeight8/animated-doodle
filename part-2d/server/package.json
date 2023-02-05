@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "node ./src/app.js",
-    "dev": "nodemon ./src/app.js"
+    "dev": "nodemon ./src/app.js",
+    "lint": "eslint ./src"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
@@ -14,7 +15,9 @@
   "name": "animated-doodle",
   "version": "1.0.0",
   "main": "./src/public/index.html",
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^8.33.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RPE8/animated-doodle.git"
