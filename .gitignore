@@ -28,3 +28,5 @@ yarn-error.log*
 
 .env
 part-2d/server/.env
+requests.log
+part-2d/server/src/middlewares/requests.log
