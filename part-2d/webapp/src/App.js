@@ -31,29 +31,43 @@ const App = () => {
     setNewNumber(event.target.value);
   };
 
-  const isUnique = (name, number) => {
-    return !persons.some((person) => {
-      return name === person.name || number === person.number;
+  const findPersonByName = (name) => {
+    return persons.find((person) => {
+      return name === person.name;
     });
+  };
+
+  const updateOrCreate = async (person) => {
+    const samePerson = findPersonByName(person.name);
+    if (samePerson) {
+      return await ky.put(`/api/lines/${samePerson._id}`, {
+        json: {
+          name: samePerson.name,
+          number: person.number,
+        },
+      });
+    } else {
+      return await ky.post("/api/lines", {
+        json: {
+          name: person.name,
+          number: person.number,
+        },
+      });
+    }
   };
 
   const onAddClick = async (event) => {
     event.preventDefault();
 
     try {
-      await ky.post("/api/lines", {
-        json: {
-          name: newName,
-          number: newNumber,
-        },
+      await updateOrCreate({
+        name: newName,
+        number: newNumber,
       });
-
-      setPersons(
-        persons.concat({
-          name: newName,
-          number: newNumber,
-        })
-      );
+      setNewName("");
+      setNewNumber("");
+      const data = await ky.get("/api/lines").json();
+      setPersons(data);
     } catch (error) {
       console.error(error);
     }
@@ -67,8 +81,10 @@ const App = () => {
       </div>
       <h2>add a new</h2>
       <AddForm
-        firstText="name: "
-        secondText="number: "
+        firstText="name "
+        secondText="number "
+        firstValue={newName}
+        secondValue={newNumber}
         onFirstChangeHandler={onNameChange}
         onSecondChangeHandler={onNumberChange}
         onAddPressHandler={onAddClick}

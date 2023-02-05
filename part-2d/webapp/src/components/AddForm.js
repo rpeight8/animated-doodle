@@ -6,13 +6,20 @@ const AddForm = ({
   secondText,
   onSecondChangeHandler,
   onAddPressHandler,
+  firstValue,
+  secondValue,
 }) => {
   return (
     <>
-      <Input labelText={firstText} onEditHandle={onFirstChangeHandler}></Input>
+      <Input
+        labelText={firstText}
+        onEditHandle={onFirstChangeHandler}
+        value={firstValue}
+      ></Input>
       <Input
         labelText={secondText}
         onEditHandle={onSecondChangeHandler}
+        value={secondValue}
       ></Input>
       <button onClick={onAddPressHandler}>add</button>
     </>

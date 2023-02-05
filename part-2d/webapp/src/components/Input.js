@@ -1,7 +1,7 @@
-const Input = ({ onEditHandle, labelText }) => {
+const Input = ({ onEditHandle, labelText, value }) => {
   return (
     <>
-      {labelText}: <input onChange={onEditHandle} />
+      {labelText}: <input onChange={onEditHandle} value={value} />
     </>
   );
 };
