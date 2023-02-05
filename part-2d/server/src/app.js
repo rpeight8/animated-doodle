@@ -1,12 +1,15 @@
+const path = require("path");
 /* eslint-disable-next-line no-unused-vars */
 const dotenv = require("dotenv").config();
+
 const port = process.env.PORT || 3001;
-const connectDB = require("./config/db.js");
 const express = require("express");
-const { errorHandler } = require("./middlewares/error.middleware.js");
-const { cors } = require("./middlewares/cors.middleware.js");
-const { logger } = require("./middlewares/logging.middleware.js");
-const path = require("path");
+const connectDB = require("./config/db");
+const { errorHandler } = require("./middlewares/error.middleware");
+const { cors } = require("./middlewares/cors.middleware");
+const { logger } = require("./middlewares/logging.middleware");
+const lineRoutes = require("./routes/line.routes");
+const infoRoutes = require("./routes/info.routes");
 
 async function main() {
   const app = express();
@@ -15,11 +18,11 @@ async function main() {
   app.use("/", express.static(path.join(__dirname, "public")));
   app.use(express.json());
   app.use(logger);
-  app.use("/api/lines", require("./routes/line.routes.js"));
-  app.use("/api/info", require("./routes/info.routes.js"));
+  app.use("/api/lines", lineRoutes);
+  app.use("/api/info", infoRoutes);
   app.use(errorHandler);
 
-  app.listen(port, function () {
+  app.listen(port, () => {
     console.log(`listening on ${port}`);
   });
 }

@@ -1,12 +1,12 @@
-const { Line } = require("../models/line.model");
 const asyncHandler = require("express-async-handler");
+const { Line } = require("../models/line.model");
 
 const getLines = asyncHandler(async (req, res) => {
   res.json(await Line.find({}, { __v: 0 }));
 });
 
 const getLine = asyncHandler(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   const line = await Line.findById(id, { __v: 0 });
 
@@ -18,15 +18,15 @@ const getLine = asyncHandler(async (req, res) => {
 });
 
 const deleteLine = asyncHandler(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   await Line.deleteOne({ _id: id });
   res.status(204).end();
 });
 
 const addLine = asyncHandler(async (req, res) => {
-  const body = req.body;
+  const { body } = req;
 
-  if (await Line.findOne({ name: body?.name })) {
+  if (await Line.findOne({ name: body.name })) {
     res.status(400);
     throw new Error("Same person already exists");
   }

@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
@@ -8,7 +9,7 @@ const {
   addLine,
   countLines,
   updateLine,
-} = require("../controllers/lines.controller.js");
+} = require("../controllers/lines.controller");
 
 router.route("/").get(getLines).post(addLine);
 router.route("/:id").get(getLine).put(updateLine).delete(deleteLine);

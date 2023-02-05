@@ -1,6 +1,5 @@
-console.log(process.argv);
-
 const mongoose = require("mongoose");
+
 const MONGO_URI = `mongodb+srv://${process.argv[2]}:${process.argv[3]}@cluster0.btspzny.mongodb.net/phoneBookDB?retryWrites=true&w=majority`;
 
 const connectDB = async () => {
