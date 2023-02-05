@@ -7,10 +7,11 @@ const {
   deleteLine,
   addLine,
   countLines,
+  updateLine,
 } = require("../controllers/lines.controller.js");
 
 router.route("/").get(getLines).post(addLine);
-router.route("/:id").get(getLine).delete(deleteLine);
+router.route("/:id").get(getLine).put(updateLine).delete(deleteLine);
 
 router.get("/info", countLines);
 
