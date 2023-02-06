@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const MONGO_URI =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/phoneBookDB";
+  process.env.NODE_ENV === "test"
+    ? process.env.MONGODB_URI_TEST
+    : process.env.MONGODB_URI;
+
+console.log(MONGO_URI);
 
 const connectDB = async () => {
   try {

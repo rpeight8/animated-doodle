@@ -6,9 +6,14 @@
     "plugin:security/recommended"
   ],
   "parserOptions": {
-	"sourceType": "module",
-	
+    "sourceType": "module",
     "ecmaVersion": 2020
+  },
+  "env": {
+    "node": true,
+    "es6": true,
+    "jest": true,
+    "commonjs": true
   },
   "plugins": ["prettier"],
   "rules": {
