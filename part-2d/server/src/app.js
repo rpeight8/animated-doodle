@@ -11,7 +11,7 @@ const { logger } = require("./middlewares/logging.middleware");
 const lineRoutes = require("./routes/line.routes");
 const infoRoutes = require("./routes/info.routes");
 
-async function main() {
+async function launch() {
   const app = express();
   await connectDB();
   app.use(cors);
@@ -27,4 +27,4 @@ async function main() {
   });
 }
 
-main().catch((err) => console.log(err));
+launch().catch((err) => console.log(err));
