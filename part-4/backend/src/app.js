@@ -3,7 +3,7 @@ const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 
-const config = require("./config/db");
+const config = require("./config/config");
 const blogRoutes = require("./routes/blog.routes");
 const { errorHandler } = require("./middlewares/error.middleware");
 const { cors } = require("./middlewares/cors.middleware");
@@ -11,25 +11,28 @@ const { logger } = require("./middlewares/logging.middleware");
 
 mongoose.set("strictQuery", false);
 
-mongoose.connect(config.MONGO_URI);
-// .then((c) => {
-//   console.log(`MongoDB Connected: ${c.connection.host}`);
-// })
-// .catch((err) => {
-//   console.error(err);
-//   // process.exit(1);
-// });
+// mongoose
+//   .connect(config.MONGODB_URI)
+//   .then(() => {
+//     console.info("connected to MongoDB");
+//   })
+//   .catch((error) => {
+//     console.error("error connecting to MongoDB:", error.message);
+//   });
 
-// const connectDB = async () => {
-//   try {
-//     const connection = await mongoose.connect(config.MONGO_URI);
-//
-//   } catch (err) {
-//
-//   }
-// };
+mongoose.connect(config.MONGODB_URI);
 
-// connectDB();
+const connectDB = async () => {
+  try {
+    const connection = await mongoose.connect(config.MONGODB_URI);
+    console.log(connection.connection.host);
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+};
+
+connectDB();
 
 const app = express();
 app.use("/", express.static(path.join(__dirname, "public")));
