@@ -23,11 +23,11 @@
   },
   "name": "animated-doodle",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "test": "cross-env jest --verbose --runInBand",
-    "dev": "cross-env NODE_ENV=development nodemon ./src/app.js",
-    "start": "cross-env NODE_ENV=production node ./src/app.js",
+    "test": "jest --verbose --runInBand",
+    "dev": "NODE_ENV=development nodemon ./src/index.js",
+    "start": "NODE_ENV=production node ./src/index.js",
     "lint": "eslint ./src"
   },
   "repository": {
@@ -43,5 +43,8 @@
   "description": "",
   "engines": {
     "node": ">=18.13.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

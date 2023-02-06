@@ -1,29 +1,42 @@
 const path = require("path");
 /* eslint-disable-next-line no-unused-vars */
-const dotenv = require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 
-const connectDB = require("./config/db");
+const config = require("./config/db");
 const blogRoutes = require("./routes/blog.routes");
 const { errorHandler } = require("./middlewares/error.middleware");
 const { cors } = require("./middlewares/cors.middleware");
 const { logger } = require("./middlewares/logging.middleware");
 
-const port = process.env.PORT || 3001;
+mongoose.set("strictQuery", false);
 
-async function launch() {
-  await connectDB();
-  const app = express();
-  app.use("/", express.static(path.join(__dirname, "public")));
-  app.use(express.json());
-  app.use(cors);
-  app.use(logger);
-  app.use("/api/blogs", blogRoutes);
-  app.use(errorHandler);
+mongoose.connect(config.MONGO_URI);
+// .then((c) => {
+//   console.log(`MongoDB Connected: ${c.connection.host}`);
+// })
+// .catch((err) => {
+//   console.error(err);
+//   // process.exit(1);
+// });
 
-  app.listen(port, () => {
-    console.log(`listening on ${port}`);
-  });
-}
+// const connectDB = async () => {
+//   try {
+//     const connection = await mongoose.connect(config.MONGO_URI);
+//
+//   } catch (err) {
+//
+//   }
+// };
 
-launch().catch((err) => console.log(err));
+// connectDB();
+
+const app = express();
+app.use("/", express.static(path.join(__dirname, "public")));
+app.use(express.json());
+app.use(cors);
+app.use(logger);
+app.use("/api/blogs", blogRoutes);
+app.use(errorHandler);
+
+module.exports = app;

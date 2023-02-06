@@ -1,9 +1,8 @@
 /* eslint-disable node/no-unpublished-require */
 // const dotenv = require("dotenv").config();
-const mongoose = require("mongoose");
 const supertest = require("supertest");
-const app = require("../src/app");
-
+const mongoose = require("mongoose");
+const app = require("../app");
 const api = supertest(app);
 
 describe("api_test", () => {
