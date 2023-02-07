@@ -21,12 +21,15 @@ const BlogSchema = new mongoose.Schema({
   votes: {
     type: Number,
     minValue: [0, "Votes must be at least 0"],
+    default: 0,
   },
 });
 
 BlogSchema.set("toJSON", {
   transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
     delete returnedObject.__v;
+    delete returnedObject._id;
   },
 });
 

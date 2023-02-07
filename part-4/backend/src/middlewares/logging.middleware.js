@@ -14,9 +14,14 @@ const logger = morgan(
       tokens.data(req, res),
     ].join(" "),
   {
-    stream: fs.createWriteStream(path.join(__dirname, "requests.log"), {
-      flags: "a",
-    }),
+    // eslint-disable-next-line consistent-return
+    stream: (() => {
+      if (process.env.NODE_ENV !== "test") {
+        return fs.createWriteStream(path.join(__dirname, "requests.log"), {
+          flags: "a",
+        });
+      }
+    })(),
   }
 );
 

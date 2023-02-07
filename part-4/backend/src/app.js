@@ -11,21 +11,10 @@ const { logger } = require("./middlewares/logging.middleware");
 
 mongoose.set("strictQuery", false);
 
-// mongoose
-//   .connect(config.MONGODB_URI)
-//   .then(() => {
-//     console.info("connected to MongoDB");
-//   })
-//   .catch((error) => {
-//     console.error("error connecting to MongoDB:", error.message);
-//   });
-
-mongoose.connect(config.MONGODB_URI);
-
 const connectDB = async () => {
   try {
     const connection = await mongoose.connect(config.MONGODB_URI);
-    console.log(connection.connection.host);
+    console.log(`Connected to MongoDB: ${connection.connection.host}`);
   } catch (err) {
     console.error(err);
     process.exit(1);
@@ -40,6 +29,6 @@ app.use(express.json());
 app.use(cors);
 app.use(logger);
 app.use("/api/blogs", blogRoutes);
-app.use(errorHandler);
+// app.use(errorHandler);
 
 module.exports = app;

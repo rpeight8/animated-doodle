@@ -45,6 +45,7 @@
     "node": ">=18.13.0"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "globalTeardown": "./src/tests/teardown.js"
   }
 }

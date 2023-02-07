@@ -17,9 +17,17 @@ const getBlog = asyncHandler(async (req, res) => {
 });
 
 const postBlog = asyncHandler(async (req, res) => {
-  const blog = new Blog({ ...req.body });
-  const createdBlog = await blog.save();
-  res.status(201).json(createdBlog);
+  try {
+    const blog = new Blog({ ...req.body });
+    const createdBlog = await blog.save();
+    res.status(201).json(createdBlog);
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      res.status(400);
+    }
+
+    throw error;
+  }
 });
 
 const putBlog = asyncHandler(async (req, res) => {
@@ -46,6 +54,11 @@ const deleteBlog = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Blog not found");
   }
+});
+
+const deleteBlogs = asyncHandler(async (req, res) => {
+  await Blog.deleteMany({});
+  res.json({ message: "Blogs removed" });
 });
 
 const addVote = asyncHandler(async (req, res) => {
@@ -88,6 +101,7 @@ module.exports = {
   postBlog,
   putBlog,
   deleteBlog,
+  deleteBlogs,
   addVote,
   removeVote,
 };
