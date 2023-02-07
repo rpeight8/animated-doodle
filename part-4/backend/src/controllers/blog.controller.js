@@ -33,9 +33,9 @@ const postBlog = asyncHandler(async (req, res) => {
 const putBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.findById(req.params.id);
   if (blog) {
-    blog.author = req.body.author;
-    blog.title = req.body.title;
-    blog.url = req.body.url;
+    blog.author = req.body.author || blog.author;
+    blog.title = req.body.title || blog.author;
+    blog.url = req.body.url || blog.url;
     blog.votes = req.body.votes ?? blog.votes;
     const updatedBlog = await blog.save();
     res.json(updatedBlog);
