@@ -20,7 +20,6 @@ const getUser = asyncHandler(async (req, res) => {
 
 const postUser = asyncHandler(async (req, res) => {
   try {
-    debugger;
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(req.body.password, saltRounds);
     req.body.passwordHash = passwordHash;

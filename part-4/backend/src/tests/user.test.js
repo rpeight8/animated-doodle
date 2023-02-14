@@ -10,12 +10,12 @@ const helper = require("./test_helper");
 
 const api = supertest(app);
 
-describe("Simple blog creation and deletion story", () => {
+describe("User creation story", () => {
   beforeAll(async () => {
     await User.deleteMany({});
 
     const passwordHash = await bcrypt.hash("secret", 10);
-    const user = new User({ username: "root", passwordHash });
+    const user = new User({ username: "root", passwordHash, name: "root" });
 
     await user.save();
   }, 20000);
@@ -61,7 +61,7 @@ describe("Simple blog creation and deletion story", () => {
       .expect(400)
       .expect("Content-Type", /application\/json/);
 
-    expect(result.body.error).toContain("`username` to be unique");
+    expect(result.body.message).toContain("`username` to be unique");
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
