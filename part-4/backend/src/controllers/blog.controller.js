@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Blog = require("../models/blog.model");
+const User = require("../models/user.model");
 
 const getBlogs = asyncHandler(async (req, res) => {
   const blogs = await Blog.find({});
@@ -18,8 +19,15 @@ const getBlog = asyncHandler(async (req, res) => {
 
 const postBlog = asyncHandler(async (req, res) => {
   try {
-    const blog = new Blog({ ...req.body });
+    const { body } = req;
+
+    const user = await User.findById(body.userId);
+
+    const blog = new Blog({ ...req.body, userId: user.id });
     const createdBlog = await blog.save();
+    // eslint-disable-next-line no-underscore-dangle
+    user.blogs = user.blogs.concat(createdBlog.id);
+    await user.save();
     res.status(201).json(createdBlog);
   } catch (error) {
     if (error.name === "ValidationError") {
