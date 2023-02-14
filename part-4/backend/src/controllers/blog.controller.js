@@ -3,7 +3,10 @@ const Blog = require("../models/blog.model");
 const User = require("../models/user.model");
 
 const getBlogs = asyncHandler(async (req, res) => {
-  const blogs = await Blog.find({});
+  const blogs = await Blog.find({}).populate("userId", {
+    username: 1,
+    name: 1,
+  });
   res.json(blogs);
 });
 

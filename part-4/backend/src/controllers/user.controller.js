@@ -4,7 +4,11 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find({}).populate("blogs", {
+    title: 1,
+    url: 1,
+    votes: 1,
+  });
   res.json(users);
 });
 
