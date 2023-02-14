@@ -23,6 +23,10 @@ const BlogSchema = new mongoose.Schema({
     minValue: [0, "Votes must be at least 0"],
     default: 0,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 BlogSchema.set("toJSON", {
