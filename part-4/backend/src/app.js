@@ -8,6 +8,7 @@ const blogRoutes = require("./routes/blog.routes");
 const userRoutes = require("./routes/user.routes");
 const loginRoutes = require("./routes/login.routes");
 const { errorHandler } = require("./middlewares/error.middleware");
+const { auth } = require("./middlewares/auth.middleware");
 const { cors } = require("./middlewares/cors.middleware");
 const { logger } = require("./middlewares/logging.middleware");
 
@@ -30,7 +31,7 @@ app.use("/", express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(cors);
 app.use(logger);
-app.use("/api/blogs", blogRoutes);
+app.use("/api/blogs", auth, blogRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/login", loginRoutes);
 app.use(errorHandler);
