@@ -1,6 +1,15 @@
 const asyncHandler = require("express-async-handler");
 const Blog = require("../models/blog.model");
 const User = require("../models/user.model");
+const jwt = require("jsonwebtoken");
+
+const getTokenFrom = (request) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "");
+  }
+  return null;
+};
 
 const getBlogs = asyncHandler(async (req, res) => {
   const blogs = await Blog.find({}).populate("userId", {
@@ -24,7 +33,13 @@ const postBlog = asyncHandler(async (req, res) => {
   try {
     const { body } = req;
 
-    const user = await User.findById(body.userId);
+    const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
+    if (!decodedToken.id) {
+      res.status(401);
+      throw new Error("token invalid");
+    }
+
+    const user = await User.findById(decodedToken.id);
 
     const blog = new Blog({ ...req.body, userId: user.id });
     const createdBlog = await blog.save();
