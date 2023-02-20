@@ -12,7 +12,11 @@ function Input({ onEditHandle, labelText, value }) {
 Input.propTypes = {
   onEditHandle: PropTypes.func.isRequired,
   labelText: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
+};
+
+Input.defaultProps = {
+  value: "",
 };
 
 export default Input;
