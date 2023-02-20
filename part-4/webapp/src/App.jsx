@@ -115,29 +115,37 @@ function App() {
   return (
     <div>
       {error.message && <Error error={error} />}
-      <LoginForm
-        onLoginPressHandler={onLoginPressClick}
-        onPasswordChangeHandler={onPasswordChange}
-        onUsernameChangeHandler={onUsernameChange}
-        userName={userName}
-        password={password}
-      />
-      <h2>Phonebook</h2>
-      <div>
-        <Input labelText="search for" onEditHandle={onNameSearch} />
-      </div>
-      <h2>add a new</h2>
-      <AddForm
-        firstText="name "
-        secondText="number "
-        firstValue={newName}
-        secondValue={newNumber}
-        onFirstChangeHandler={onNameChange}
-        onSecondChangeHandler={onNumberChange}
-        onAddPressHandler={onAddClick}
-      />
-      <h2>Numbers</h2>
-      <List items={persons.filter(({ name }) => name.includes(searchString))} />
+      {user === null && (
+        <LoginForm
+          onLoginPressHandler={onLoginPressClick}
+          onPasswordChangeHandler={onPasswordChange}
+          onUsernameChangeHandler={onUsernameChange}
+          userName={userName}
+          password={password}
+        />
+      )}
+      {user !== null && (
+        <>
+          <h2>Phonebook</h2>
+          <div>
+            <Input labelText="search for" onEditHandle={onNameSearch} />
+          </div>
+          <h2>add a new</h2>
+          <AddForm
+            firstText="name "
+            secondText="number "
+            firstValue={newName}
+            secondValue={newNumber}
+            onFirstChangeHandler={onNameChange}
+            onSecondChangeHandler={onNumberChange}
+            onAddPressHandler={onAddClick}
+          />
+          <h2>Numbers</h2>
+          <List
+            items={persons.filter(({ name }) => name.includes(searchString))}
+          />
+        </>
+      )}
     </div>
   );
 }
