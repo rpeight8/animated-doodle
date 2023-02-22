@@ -7,7 +7,7 @@ function List({ items }) {
       {items.map((item, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <li key={i}>
-          <span>{item.name}</span> <span>{item.number}</span>
+          <span>{item.title}</span> <span>{item.author}</span>
         </li>
       ))}
     </ul>

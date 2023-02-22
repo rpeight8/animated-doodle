@@ -1,18 +1,24 @@
 import ky from "ky";
 
 import { useEffect, useState } from "react";
-import AddForm from "./components/AddForm";
+import BlogForm from "./components/BlogForm";
 import Input from "./components/Input";
 import List from "./components/List";
 import Error from "./components/Error";
 import LoginForm from "./components/LoginForm";
+import webClient from "./components/webClient";
 import loginService from "./services/login";
+import blogService from "./services/blogs";
 
 function App() {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
+  const [blogs, setBlogs] = useState([]);
+  const [newTitle, setNewTitle] = useState("");
+  const [newAuthor, setNewAuthor] = useState("");
+  const [newVotes, setNewVotes] = useState(0);
+  const [newURL, setNewURL] = useState("");
+
   const [searchString, setSearchString] = useState("");
+
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -21,26 +27,18 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await ky.get("/api/lines").json();
-        setPersons(data);
+        const data = await blogService.getAll();
+        setBlogs(data);
       } catch (err) {
         setError(err);
       }
     };
 
     fetchData().catch(console.error);
-  }, []);
+  }, [user?.token]);
 
-  const onNameSearch = (event) => {
+  const onTitleSearch = (event) => {
     setSearchString(event.target.value);
-  };
-
-  const onNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
-  const onNumberChange = (event) => {
-    setNewNumber(event.target.value);
   };
 
   const onUsernameChange = (event) => {
@@ -51,40 +49,23 @@ function App() {
     setPassword(event.target.value);
   };
 
-  const findPersonByName = (name) =>
-    persons.find((person) => name === person.name);
+  const findBlogByTitle = (title) => blogs.find((blog) => title === blog.title);
 
-  const updateOrCreate = async (person) => {
-    const samePerson = findPersonByName(person.name);
-    if (samePerson) {
-      return ky.put(`/api/lines/${samePerson._id}`, {
-        json: {
-          name: samePerson.name,
-          number: person.number,
-        },
-      });
-    }
-
-    return ky.post("/api/lines", {
-      json: {
-        name: person.name,
-        number: person.number,
-      },
-    });
-  };
+  const updateOrCreate = async (blog) => blogService.create(blog);
 
   const onAddClick = async (event) => {
     event.preventDefault();
 
     try {
-      await updateOrCreate({
-        name: newName,
-        number: newNumber,
+      await blogService.create({
+        title: newTitle,
+        author: newAuthor,
+        url: newURL,
       });
-      setNewName("");
-      setNewNumber("");
-      const data = await ky.get("/api/lines").json();
-      setPersons(data);
+      setNewTitle("");
+      setNewAuthor("");
+      setNewURL("");
+      setBlogs(await blogService.getAll());
       setError({});
     } catch (err) {
       if (err.name === "HTTPError") {
@@ -102,6 +83,7 @@ function App() {
       setUser(loggedUser);
       setUserName("");
       setPassword("");
+      localStorage.setItem("token", loggedUser.token);
     } catch (err) {
       if (err.name === "HTTPError") {
         const errorJson = await err.response.json();
@@ -126,23 +108,27 @@ function App() {
       )}
       {user !== null && (
         <>
-          <h2>Phonebook</h2>
+          <h2>Blogs</h2>
           <div>
-            <Input labelText="search for" onEditHandle={onNameSearch} />
+            <Input
+              labelText="search for"
+              onEditHandle={onTitleSearch}
+              value={searchString}
+            />
           </div>
           <h2>add a new</h2>
-          <AddForm
-            firstText="name "
-            secondText="number "
-            firstValue={newName}
-            secondValue={newNumber}
-            onFirstChangeHandler={onNameChange}
-            onSecondChangeHandler={onNumberChange}
+          <BlogForm
             onAddPressHandler={onAddClick}
+            onTitleChangeHandler={setNewTitle}
+            onAuthorChangeHandler={setNewAuthor}
+            onUrlChangeHandler={setNewURL}
+            titleValue={newTitle}
+            authorValue={newAuthor}
+            urlValue={newURL}
           />
-          <h2>Numbers</h2>
+          <h2>Blogs</h2>
           <List
-            items={persons.filter(({ name }) => name.includes(searchString))}
+            items={blogs.filter(({ title }) => title.includes(searchString))}
           />
         </>
       )}
