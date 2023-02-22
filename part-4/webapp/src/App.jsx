@@ -8,13 +8,11 @@ import Error from "./components/Error";
 import LoginForm from "./components/LoginForm";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
-import { setToken } from "./components/webClient";
+import Tooglable from "./components/Tooglable";
+import { setToken } from "./services/webClient";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
-  const [newTitle, setNewTitle] = useState("");
-  const [newAuthor, setNewAuthor] = useState("");
-  const [newVotes, setNewVotes] = useState(0);
   const [newURL, setNewURL] = useState("");
 
   const [searchString, setSearchString] = useState("");
@@ -34,6 +32,9 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!user) {
+          return;
+        }
         const data = await blogService.getAll();
         setBlogs(data);
       } catch (err) {
@@ -42,7 +43,7 @@ function App() {
     };
 
     fetchData().catch(console.error);
-  }, [user?.token]);
+  }, [user, user?.token]);
 
   const onTitleSearch = (event) => {
     setSearchString(event.target.value);
@@ -56,22 +57,13 @@ function App() {
     setPassword(event.target.value);
   };
 
-  const findBlogByTitle = (title) => blogs.find((blog) => title === blog.title);
-
-  const updateOrCreate = async (blog) => blogService.create(blog);
-
-  const onAddClick = async (event) => {
-    event.preventDefault();
-
+  const onAddClick = async ({ title, author, url }) => {
     try {
       await blogService.create({
-        title: newTitle,
-        author: newAuthor,
-        url: newURL,
+        title,
+        author,
+        url,
       });
-      setNewTitle("");
-      setNewAuthor("");
-      setNewURL("");
       setBlogs(await blogService.getAll());
       setError({});
     } catch (err) {
@@ -106,13 +98,15 @@ function App() {
     <div>
       {error.message && <Error error={error} />}
       {user === null && (
-        <LoginForm
-          onLoginPressHandler={onLoginPressClick}
-          onPasswordChangeHandler={onPasswordChange}
-          onUsernameChangeHandler={onUsernameChange}
-          userName={userName}
-          password={password}
-        />
+        <Tooglable buttonLabel="login">
+          <LoginForm
+            onLoginPressHandler={onLoginPressClick}
+            onPasswordChangeHandler={onPasswordChange}
+            onUsernameChangeHandler={onUsernameChange}
+            userName={userName}
+            password={password}
+          />
+        </Tooglable>
       )}
       {user !== null && (
         <>
@@ -135,15 +129,9 @@ function App() {
             />
           </div>
           <h2>add a new</h2>
-          <BlogForm
-            onAddPressHandler={onAddClick}
-            onTitleChangeHandler={setNewTitle}
-            onAuthorChangeHandler={setNewAuthor}
-            onUrlChangeHandler={setNewURL}
-            titleValue={newTitle}
-            authorValue={newAuthor}
-            urlValue={newURL}
-          />
+          <Tooglable buttonLabel="Add blog">
+            <BlogForm onAddPressHandler={onAddClick} />
+          </Tooglable>
           <h2>Blogs</h2>
           <List
             items={blogs.filter(({ title }) => title.includes(searchString))}

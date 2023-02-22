@@ -1,39 +1,52 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { useState } from "react";
+
 import PropTypes from "prop-types";
 import Input from "./Input";
 
-function BlogForm({
-  onAddPressHandler,
-  titleValue,
-  authorValue,
-  urlValue,
-  onTitleChangeHandler,
-  onAuthorChangeHandler,
-  onUrlChangeHandler,
-}) {
-  const onTitleChange = (event) => {
-    onTitleChangeHandler(event.target.value);
+function BlogForm({ onAddPressHandler }) {
+  const [titleValue, setTitleValue] = useState("");
+  const [authorValue, setAuthorValue] = useState("");
+  const [urlValue, setUrlValue] = useState("");
+
+  const createNote = (event) => {
+    event.preventDefault();
+
+    onAddPressHandler({
+      title: titleValue,
+      author: authorValue,
+      url: urlValue,
+    });
+
+    setTitleValue("");
+    setAuthorValue("");
+    setUrlValue("");
   };
-  const onAuthorChange = (event) => {
-    onAuthorChangeHandler(event.target.value);
-  };
-  const onUrlChange = (event) => {
-    onUrlChangeHandler(event.target.value);
-  };
+
   return (
     <form>
       <Input
         labelText="title "
         value={titleValue}
-        onEditHandle={onTitleChange}
+        onEditHandle={(event) => {
+          setTitleValue(event.target.value);
+        }}
       />
       <Input
         labelText="author "
         value={authorValue}
-        onEditHandle={onAuthorChange}
+        onEditHandle={(event) => {
+          setAuthorValue(event.target.value);
+        }}
       />
-      <Input labelText="url " value={urlValue} onEditHandle={onUrlChange} />
-      <button type="submit" onClick={onAddPressHandler}>
+      <Input
+        labelText="url "
+        value={urlValue}
+        onEditHandle={(event) => {
+          setUrlValue(event.target.value);
+        }}
+      />
+      <button type="submit" onClick={createNote}>
         add
       </button>
     </form>
@@ -42,12 +55,6 @@ function BlogForm({
 
 BlogForm.propTypes = {
   onAddPressHandler: PropTypes.func.isRequired,
-  titleValue: PropTypes.string.isRequired,
-  authorValue: PropTypes.string.isRequired,
-  urlValue: PropTypes.string.isRequired,
-  onTitleChangeHandler: PropTypes.func.isRequired,
-  onAuthorChangeHandler: PropTypes.func.isRequired,
-  onUrlChangeHandler: PropTypes.func.isRequired,
 };
 
 export default BlogForm;

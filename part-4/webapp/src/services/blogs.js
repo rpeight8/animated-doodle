@@ -1,4 +1,4 @@
-import { webClient } from "../components/webClient";
+import { webClient } from "./webClient";
 
 const baseUrl = "api/blogs";
 
