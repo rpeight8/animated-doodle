@@ -6,9 +6,9 @@ import Input from "./components/Input";
 import List from "./components/List";
 import Error from "./components/Error";
 import LoginForm from "./components/LoginForm";
-import webClient from "./components/webClient";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+import { setToken } from "./components/webClient";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -23,6 +23,13 @@ function App() {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState({});
+
+  const loggedUserJSON = window.localStorage.getItem("user");
+  if (loggedUserJSON && !user) {
+    const loggedUser = JSON.parse(loggedUserJSON);
+    setUser(loggedUser);
+    setToken(loggedUser.token);
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +90,8 @@ function App() {
       setUser(loggedUser);
       setUserName("");
       setPassword("");
-      localStorage.setItem("token", loggedUser.token);
+      localStorage.setItem("user", JSON.stringify(loggedUser));
+      setToken(loggedUser.token);
     } catch (err) {
       if (err.name === "HTTPError") {
         const errorJson = await err.response.json();
@@ -108,6 +116,16 @@ function App() {
       )}
       {user !== null && (
         <>
+          <button
+            type="button"
+            onClick={() => {
+              setUser(null);
+              localStorage.removeItem("user");
+            }}
+          >
+            logout
+          </button>
+
           <h2>Blogs</h2>
           <div>
             <Input
