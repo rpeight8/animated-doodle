@@ -3,13 +3,15 @@ import ky from "ky";
 import { useEffect, useState, useRef } from "react";
 import BlogForm from "./components/BlogForm";
 import Input from "./components/Input";
-import List from "./components/List";
+import BlogList from "./components/BlogList";
 import Error from "./components/Error";
 import LoginForm from "./components/LoginForm";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
 import Tooglable from "./components/Tooglable";
 import { setToken } from "./services/webClient";
+
+import "./App.css";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -136,7 +138,7 @@ function App() {
             <BlogForm onAddPressHandler={onAddClick} />
           </Tooglable>
           <h2>Blogs</h2>
-          <List
+          <BlogList
             items={blogs.filter(({ title }) => title.includes(searchString))}
           />
         </>

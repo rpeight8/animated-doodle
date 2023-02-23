@@ -1,20 +1,22 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { useState } from "react";
 import PropTypes from "prop-types";
+import BlogListItem from "./BlogListItem";
 
-function List({ items }) {
+function BlogList({ items }) {
   return (
     <ul>
       {items.map((item, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        <li key={i}>
-          <span>{item.title}</span> <span>{item.author}</span>
+        <li key={item.id}>
+          <BlogListItem blog={item} />
         </li>
       ))}
     </ul>
   );
 }
 
-List.propTypes = {
+BlogList.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
@@ -23,4 +25,4 @@ List.propTypes = {
   ).isRequired,
 };
 
-export default List;
+export default BlogList;
