@@ -1,6 +1,6 @@
 import ky from "ky";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import BlogForm from "./components/BlogForm";
 import Input from "./components/Input";
 import List from "./components/List";
@@ -57,8 +57,11 @@ function App() {
     setPassword(event.target.value);
   };
 
+  const blogFormRef = useRef();
+
   const onAddClick = async ({ title, author, url }) => {
     try {
+      blogFormRef.current.toggleVisibility();
       await blogService.create({
         title,
         author,
@@ -129,7 +132,7 @@ function App() {
             />
           </div>
           <h2>add a new</h2>
-          <Tooglable buttonLabel="Add blog">
+          <Tooglable buttonLabel="Add blog" ref={blogFormRef}>
             <BlogForm onAddPressHandler={onAddClick} />
           </Tooglable>
           <h2>Blogs</h2>
