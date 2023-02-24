@@ -2,8 +2,7 @@ import { useState } from "react";
 
 import PropTypes from "prop-types";
 
-function BlogListItem({ blog, handleDelete, handleVote }) {
-  const [votes, setVotes] = useState(blog.votes);
+function BlogListItem({ blog, handleDelete, handleVote, currentUser }) {
   const [detailsVisible, setDetailsVisible] = useState(false);
 
   const onDetailsPressHandler = () => {
@@ -11,19 +10,17 @@ function BlogListItem({ blog, handleDelete, handleVote }) {
   };
 
   const handleVoteClick = () => {
-    handleVote(blog.id);
-    setVotes(votes + 1);
+    handleVote(blog, true);
   };
 
   const handleRemoveVoteClick = () => {
-    if (votes > 0) {
-      handleVote(blog.id);
-      setVotes(votes - 1);
+    if (blog.votes > 0) {
+      handleVote(blog, false);
     }
   };
 
   return (
-    <div className="blog-list-item">
+    <div className="blog-list__blog-list-item blog-list-item">
       <h3>{blog.title}</h3>
       <p>Author: {blog.author}</p>
       <button type="button" onClick={onDetailsPressHandler}>
@@ -33,7 +30,7 @@ function BlogListItem({ blog, handleDelete, handleVote }) {
         <div>
           <p>URL: {blog.url}</p>
           <div className="votes">
-            <p>Votes: {votes}</p>
+            <p>Votes: {blog.votes}</p>
             <button type="button" onClick={handleVoteClick}>
               Vote
             </button>
@@ -41,12 +38,14 @@ function BlogListItem({ blog, handleDelete, handleVote }) {
               Remove Vote
             </button>
           </div>
-          <p>User: {blog.userId?.username} </p>
+          <p>User: {blog?.userId?.username} </p>
         </div>
       )}
-      <button type="button" onClick={() => handleDelete(blog.id)}>
-        Delete
-      </button>
+      {currentUser.username === blog?.userId?.username && (
+        <button type="button" onClick={() => handleDelete(blog)}>
+          Delete
+        </button>
+      )}
     </div>
   );
 }
@@ -64,6 +63,9 @@ BlogListItem.propTypes = {
   }).isRequired,
   handleDelete: PropTypes.func.isRequired,
   handleVote: PropTypes.func.isRequired,
+  currentUser: PropTypes.shape({
+    username: PropTypes.string,
+  }).isRequired,
 };
 
 export default BlogListItem;

@@ -1,3 +1,17 @@
 .votes {
   display: flex;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+.votes p {
+  margin: 0;
+}
+
+.blog-list-item {
+  border: 1px solid #ccc;
+}
+
+.blog-list {
+  list-style: none;
 }

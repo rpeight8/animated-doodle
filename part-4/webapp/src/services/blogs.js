@@ -25,4 +25,14 @@ const remove = async (id) => {
   await webClient.delete(`${baseUrl}/${id}`);
 };
 
-export default { getAll, create, update, remove };
+const addVote = async (id) => {
+  const response = await webClient.post(`${baseUrl}/${id}/addVote`);
+  return response.json();
+};
+
+const removeVote = async (id) => {
+  const response = await webClient.post(`${baseUrl}/${id}/removeVote`);
+  return response.json();
+};
+
+export default { getAll, create, update, remove, addVote, removeVote };

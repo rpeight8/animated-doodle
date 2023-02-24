@@ -65,13 +65,18 @@ const putBlog = asyncHandler(async (req, res) => {
 });
 
 const deleteBlog = asyncHandler(async (req, res) => {
+  if (!req.params.id || req.params.id === "" || req.params.id === "undefined") {
+    res.status(400);
+    throw new Error("Blog id not provided");
+  }
+
   const blog = await Blog.findById(req.params.id);
 
   if (!blog) {
     res.status(404);
     throw new Error("Blog not found");
   }
-  console.log(req.user);
+
   if (blog?.userId?.toString() !== req.user.id) {
     res.status(401);
     throw new Error("Not authorized to delete this blog");

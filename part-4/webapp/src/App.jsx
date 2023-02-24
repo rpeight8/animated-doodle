@@ -15,7 +15,6 @@ import "./App.css";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
-  const [newURL, setNewURL] = useState("");
 
   const [searchString, setSearchString] = useState("");
 
@@ -24,6 +23,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState({});
 
+  const requestNumber = useRef(0);
+
   const loggedUserJSON = window.localStorage.getItem("user");
   if (loggedUserJSON && !user) {
     const loggedUser = JSON.parse(loggedUserJSON);
@@ -31,14 +32,25 @@ function App() {
     setToken(loggedUser.token);
   }
 
+  const getAndDisplayBlogs = async () => {
+    requestNumber.current += 1;
+    const currentRequestNumber = requestNumber.current;
+    const data = await blogService.getAll();
+
+    if (currentRequestNumber !== requestNumber.current) {
+      return;
+    }
+    data.sort((a, b) => b.votes - a.votes);
+    setBlogs(data);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!user) {
           return;
         }
-        const data = await blogService.getAll();
-        setBlogs(data);
+        getAndDisplayBlogs();
       } catch (err) {
         setError(err);
       }
@@ -69,8 +81,33 @@ function App() {
         author,
         url,
       });
-      setBlogs(await blogService.getAll());
-      setError({});
+      getAndDisplayBlogs();
+    } catch (err) {
+      if (err.name === "HTTPError") {
+        const errorJson = await err.response.json();
+        setError(errorJson);
+      }
+    }
+  };
+
+  const handleVote = async (blog, isAdd) => {
+    try {
+      if (isAdd) await blogService.addVote(blog.id);
+      else await blogService.removeVote(blog.id);
+
+      getAndDisplayBlogs();
+    } catch (err) {
+      if (err.name === "HTTPError") {
+        const errorJson = await err.response.json();
+        setError(errorJson);
+      }
+    }
+  };
+
+  const handleDelete = async (blog) => {
+    try {
+      await blogService.remove(blog.id);
+      getAndDisplayBlogs();
     } catch (err) {
       if (err.name === "HTTPError") {
         const errorJson = await err.response.json();
@@ -140,6 +177,9 @@ function App() {
           <h2>Blogs</h2>
           <BlogList
             items={blogs.filter(({ title }) => title.includes(searchString))}
+            handleVote={handleVote}
+            handleDelete={handleDelete}
+            currentUser={user}
           />
         </>
       )}

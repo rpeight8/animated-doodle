@@ -20,6 +20,7 @@ function LoginForm({
       <Input
         onEditHandle={onPasswordChangeHandler}
         labelText="password"
+        type="password"
         value={password}
       />
       <button type="submit">login</button>
