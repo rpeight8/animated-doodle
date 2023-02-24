@@ -21,9 +21,13 @@ function BlogListItem({ blog, handleDelete, handleVote, currentUser }) {
 
   return (
     <div className="blog-list__blog-list-item blog-list-item">
-      <h3>{blog.title}</h3>
-      <p>Author: {blog.author}</p>
-      <button type="button" onClick={onDetailsPressHandler}>
+      <h3 className="blog-list-item__title">{blog.title}</h3>
+      <p className="blog-list-item__author">Author: {blog.author}</p>
+      <button
+        className="blog-list-item__detail-button"
+        type="button"
+        onClick={onDetailsPressHandler}
+      >
         {!detailsVisible ? "Details" : "Hide"}
       </button>
       {detailsVisible && (
@@ -38,7 +42,9 @@ function BlogListItem({ blog, handleDelete, handleVote, currentUser }) {
               Remove Vote
             </button>
           </div>
-          <p>User: {blog?.userId?.username} </p>
+          <p className="blog-list-item__user">
+            User: {blog?.userId?.username}{" "}
+          </p>
         </div>
       )}
       {currentUser.username === blog?.userId?.username && (

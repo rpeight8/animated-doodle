@@ -27,6 +27,7 @@ function BlogForm({ onAddPressHandler }) {
     <form>
       <Input
         labelText="title "
+        placeholder="title"
         value={titleValue}
         onEditHandle={(event) => {
           setTitleValue(event.target.value);
@@ -35,6 +36,7 @@ function BlogForm({ onAddPressHandler }) {
       <Input
         labelText="author "
         value={authorValue}
+        placeholder="author"
         onEditHandle={(event) => {
           setAuthorValue(event.target.value);
         }}
@@ -42,6 +44,7 @@ function BlogForm({ onAddPressHandler }) {
       <Input
         labelText="url "
         value={urlValue}
+        placeholder="url"
         onEditHandle={(event) => {
           setUrlValue(event.target.value);
         }}
