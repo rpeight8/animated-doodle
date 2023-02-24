@@ -1,5 +1,3 @@
-import ky from "ky";
-
 import { useEffect, useState, useRef } from "react";
 import BlogForm from "./components/BlogForm";
 import Input from "./components/Input";

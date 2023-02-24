@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { useState } from "react";
 import PropTypes from "prop-types";
 import BlogListItem from "./BlogListItem";
 

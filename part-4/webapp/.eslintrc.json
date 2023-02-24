@@ -2,6 +2,8 @@
   "extends": [
     "airbnb",
     "airbnb/hooks",
+    "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "prettier",
     "plugin:security/recommended"
@@ -17,7 +19,7 @@
     "es6": true,
     "browser": true
   },
-  "plugins": ["prettier"],
+  "plugins": ["react", "jest", "prettier"],
   "rules": {
     "prettier/prettier": "error",
     "no-unused-vars": "warn",
