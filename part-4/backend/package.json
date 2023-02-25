@@ -31,7 +31,8 @@
     "test": "jest --verbose --runInBand",
     "dev": "NODE_ENV=development nodemon ./src/index.js",
     "start": "NODE_ENV=production node ./src/index.js",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "start:test": "NODE_ENV=test node ./src/index.js"
   },
   "repository": {
     "type": "git",

@@ -13,17 +13,21 @@ function LoginForm({
   return (
     <form onSubmit={onLoginPressHandler}>
       <Input
+        id="login-form__username"
         onEditHandle={onUsernameChangeHandler}
         labelText="username"
         value={userName}
       />
       <Input
+        id="login-form__password"
         onEditHandle={onPasswordChangeHandler}
         labelText="password"
         type="password"
         value={password}
       />
-      <button type="submit">login</button>
+      <button id="login-form__login-button" type="submit">
+        login
+      </button>
     </form>
   );
 }
