@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 const noteReducer = (state = [], action) => {
   switch (action.type) {
     case "NEW_NOTE":
@@ -14,6 +16,26 @@ const noteReducer = (state = [], action) => {
     default:
       return state;
   }
+};
+
+const generateId = () => uuidv4();
+
+export const createNote = (content) => {
+  return {
+    type: "NEW_NOTE",
+    payload: {
+      content,
+      important: false,
+      id: generateId(),
+    },
+  };
+};
+
+export const toggleImportanceOf = (id) => {
+  return {
+    type: "TOGGLE_IMPORTANCE",
+    payload: { id },
+  };
 };
 
 export default noteReducer;
