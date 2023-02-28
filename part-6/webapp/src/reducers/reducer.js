@@ -13,6 +13,14 @@ const noteReducer = (state = [], action) => {
       };
       return state.map((note) => (note.id !== id ? note : changedNote));
     }
+    case "VOTE": {
+      return state.map((note) => {
+        if (note.id === action.payload.id) {
+          return { ...note, votes: note.votes + 1 };
+        }
+        return note;
+      });
+    }
     default:
       return state;
   }
@@ -26,6 +34,7 @@ export const createNote = (content) => {
     payload: {
       content,
       important: false,
+      votes: 0,
       id: generateId(),
     },
   };
@@ -34,6 +43,13 @@ export const createNote = (content) => {
 export const toggleImportanceOf = (id) => {
   return {
     type: "TOGGLE_IMPORTANCE",
+    payload: { id },
+  };
+};
+
+export const voteFor = (id) => {
+  return {
+    type: "VOTE",
     payload: { id },
   };
 };

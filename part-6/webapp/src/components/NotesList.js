@@ -1,4 +1,4 @@
-import { toggleImportanceOf } from "../reducers/reducer";
+import { toggleImportanceOf, voteFor } from "../reducers/reducer";
 import { useDispatch, useSelector } from "react-redux";
 
 function NotesList() {
@@ -9,13 +9,29 @@ function NotesList() {
     dispatch(toggleImportanceOf(id));
   };
 
+  const vote = (id) => {
+    dispatch(voteFor(id));
+  };
+
   return (
     <ul>
-      {notes.map((note) => (
-        <li key={note.id} onClick={() => toggleImportance(note.id)}>
-          {note.content} <strong>{note.important ? "important" : ""}</strong>
-        </li>
-      ))}
+      {notes
+        .sort((a, b) => b.votes - a.votes)
+        .map((note) => (
+          <li key={note.id}>
+            {note.content} <strong>{note.important ? "important" : ""}</strong>
+            <br />
+            <span>{note.votes}</span>
+            <button
+              type="button"
+              onClick={() => {
+                vote(note.id);
+              }}
+            >
+              Vote
+            </button>
+          </li>
+        ))}
     </ul>
   );
 }
