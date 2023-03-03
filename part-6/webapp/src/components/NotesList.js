@@ -1,16 +1,25 @@
-import { toggleImportanceOf, voteFor } from "../reducers/reducer";
+import { toggleImportanceOf, voteFor } from "../reducers/notesReducer";
+import { setNotification } from "../reducers/notificationReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 function NotesList() {
-  const notes = useSelector((state) => state);
-  const dispatch = useDispatch();
+  const notes = [
+    ...useSelector(({ notes, filters }) => {
+      if (filters === "ALL") {
+        return notes;
+      } else if (filters === "IMPORTANT") {
+        return notes.filter((note) => note.important);
+      } else if (filters === "NONIMPORTANT") {
+        return notes.filter((note) => !note.important);
+      }
+    }),
+  ];
 
-  const toggleImportance = (id) => {
-    dispatch(toggleImportanceOf(id));
-  };
+  const dispatch = useDispatch();
 
   const vote = (id) => {
     dispatch(voteFor(id));
+    dispatch(setNotification(`Voted for note: ${id}`));
   };
 
   return (

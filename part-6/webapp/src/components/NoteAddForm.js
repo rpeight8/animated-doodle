@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 
-import { createNote } from "../reducers/reducer";
+import { newNote } from "../reducers/notesReducer";
+import { setNotification } from "../reducers/notificationReducer";
 
 function AddForm(props) {
   const dispatch = useDispatch();
@@ -9,7 +10,8 @@ function AddForm(props) {
     event.preventDefault();
     const content = event.target.note.value;
     event.target.note.value = "";
-    dispatch(createNote(content));
+    dispatch(newNote(content));
+    dispatch(setNotification(`Added note: ${content}`));
   };
 
   return (
