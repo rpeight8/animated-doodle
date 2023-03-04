@@ -1,6 +1,7 @@
-import { toggleImportanceOf, voteFor } from "../reducers/notesReducer";
+import { voteFor } from "../reducers/notesReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import { useDispatch, useSelector } from "react-redux";
+import noteService from "../services/notes";
 
 function NotesList() {
   const notes = [
@@ -17,7 +18,10 @@ function NotesList() {
 
   const dispatch = useDispatch();
 
-  const vote = (id) => {
+  const vote = async (id) => {
+    const note = { ...notes.find((note) => note.id === id) };
+    note.votes = note.votes + 1;
+    await noteService.update(note.id, note);
     dispatch(voteFor(id));
     dispatch(setNotification(`Voted for note: ${id}`));
   };

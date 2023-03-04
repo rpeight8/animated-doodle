@@ -1,0 +1,44 @@
+{
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-security": "^1.7.1",
+    "prettier": "^2.8.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "mongoose": "^6.9.0",
+    "nodemon": "^2.0.20"
+  },
+  "name": "animated-doodle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "dev": "NODE_ENV=development nodemon ./src/index.js",
+    "start": "NODE_ENV=production node ./src/index.js",
+    "lint": "eslint ./src",
+    "start:test": "NODE_ENV=test node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RPE8/animated-doodle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RPE8/animated-doodle/issues"
+  },
+  "homepage": "https://github.com/RPE8/animated-doodle#readme",
+  "description": "",
+  "engines": {
+    "node": ">=18.13.0"
+  }
+}

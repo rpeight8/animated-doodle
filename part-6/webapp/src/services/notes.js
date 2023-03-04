@@ -12,4 +12,9 @@ const create = async (newObject) => {
   return response.json();
 };
 
-export default { getAll, create };
+const update = async (id, newObject) => {
+  const response = await ky.put(`${baseUrl}/${id}`, { json: newObject });
+  return response.json();
+};
+
+export default { getAll, create, update };
