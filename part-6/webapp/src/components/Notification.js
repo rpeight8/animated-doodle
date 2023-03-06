@@ -1,18 +1,17 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { setNotification } from "../reducers/notificationReducer";
+import {
+  useNotificationValue,
+  useNotificationDispatch,
+} from "../notificationContext";
 
 const Notification = () => {
-  const dispatch = useDispatch();
-  const notification = useSelector((state) => {
-    return state.notifications;
-  });
-
-  const { message } = notification;
+  const { message } = useNotificationValue();
+  const dispatch = useNotificationDispatch();
 
   useEffect(() => {
     const timeId = setTimeout(() => {
-      dispatch(setNotification(""));
+      dispatch({ type: "SET_NOTIFICATION", payload: null });
     }, 5000);
 
     return () => {
@@ -24,7 +23,6 @@ const Notification = () => {
     border: "solid",
     padding: 10,
     borderWidth: 1,
-    transition: "visibility ",
   };
   return message && <div style={style}>{message}</div>;
 };

@@ -1,9 +1,11 @@
-import { voteFor } from "../reducers/notesReducer";
-import { setNotification } from "../reducers/notificationReducer";
+// import { voteFor } from "../reducers/notesReducer";
+import { useNotificationDispatch } from "../notificationContext";
 import { useDispatch, useSelector } from "react-redux";
+import { voteFor } from "../reducers/notesReducer";
 import noteService from "../services/notes";
 
 function NotesList() {
+  const notificationDispatch = useNotificationDispatch();
   const notes = [
     ...useSelector(({ notes, filters }) => {
       if (filters === "ALL") {
@@ -23,7 +25,10 @@ function NotesList() {
     note.votes = note.votes + 1;
     await noteService.update(note.id, note);
     dispatch(voteFor(id));
-    dispatch(setNotification(`Voted for note: ${id}`));
+    notificationDispatch({
+      type: "SET_NOTIFICATION",
+      payload: `Voted for note: ${id}`,
+    });
   };
 
   return (
