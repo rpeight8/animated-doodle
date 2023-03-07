@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useField, useForm } from "./hooks";
 
+import { Table, Form, Button } from "react-bootstrap";
+
 const Notes = ({ notes }) => {
   const titleInput = useField("text");
   const { setValue: titleSetValue, ...title } = titleInput;
@@ -17,24 +19,33 @@ const Notes = ({ notes }) => {
   return (
     <div>
       <h2>Form</h2>
-      <form onSubmit={addForm.onSubmit} onReset={addForm.onReset}>
-        <div>
-          title: <input {...title} />
-        </div>
-        <div>
-          description: <input {...description} />
-        </div>
-        <button type="submit">create</button>
-        <button type="reset">reset</button>
-      </form>
+      <Form onSubmit={addForm.onSubmit} onReset={addForm.onReset}>
+        <Form.Group>
+          <Form.Label>title:</Form.Label>
+          <Form.Control {...title} />
+          <Form.Label>description:</Form.Label>
+          <Form.Control {...description} />
+          <Button variant="primary" type="submit">
+            create
+          </Button>
+          <Button variant="primary" type="reset">
+            reset
+          </Button>
+        </Form.Group>
+      </Form>
       <h2>Notes</h2>
-      <ul>
-        {notes.map((note) => (
-          <li key={note.id}>
-            <Link to={`/notes/${note.id}`}>{note.content}</Link>
-          </li>
-        ))}
-      </ul>
+      <Table striped>
+        <tbody>
+          {notes.map((note) => (
+            <tr key={note.id}>
+              <td>
+                <Link to={`/notes/${note.id}`}>{note.content}</Link>
+              </td>
+              <td>{note.important ? "important" : ""}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };

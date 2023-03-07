@@ -10,6 +10,8 @@ import Notes from "./Notes";
 
 import { useState } from "react";
 
+import { Navbar, Nav } from "react-bootstrap";
+
 const Users = () => {
   return (
     <div>
@@ -94,25 +96,38 @@ const App = () => {
     : null;
 
   return (
-    <>
-      <div>
-        <Link style={padding} to="/">
-          home
-        </Link>
-        <Link style={padding} to="/notes">
-          notes
-        </Link>
-        <Link style={padding} to="/users">
-          users
-        </Link>
-        {user ? (
-          <em>{user} logged in</em>
-        ) : (
-          <Link style={padding} to="/login">
-            login
-          </Link>
-        )}
-      </div>
+    <div className="container">
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/">
+                home
+              </Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/notes">
+                notes
+              </Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/users">
+                users
+              </Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              {user ? (
+                <em>{user} logged in</em>
+              ) : (
+                <Link style={padding} to="/login">
+                  login
+                </Link>
+              )}
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
 
       <Routes>
         <Route
@@ -138,7 +153,7 @@ const App = () => {
       <footer>
         <i>Note app, Department of Computer Science 2023</i>
       </footer>
-    </>
+    </div>
   );
 };
 
