@@ -12,3 +12,9 @@ root.render(
     </Router>
   </React.StrictMode>
 );
+
+
+//use http-proxy-middleware for websockets
+
+
+
