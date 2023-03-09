@@ -1,7 +1,14 @@
 {
+  "type": "module",
   "dependencies": {
     "@apollo/server": "^4.4.1",
     "graphql": "^16.6.0",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  },
+  "scripts": {
+    "start": "nodemon ./ex.js"
   }
 }
