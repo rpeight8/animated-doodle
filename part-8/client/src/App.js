@@ -2,8 +2,8 @@ import { gql, useQuery } from "@apollo/client";
 
 import Container from "react-bootstrap/Container";
 
-import LibraryContext from "./LibraryContext";
-import 
+import LibraryContextProvider from "./LibraryContext";
+import { ALL_BOOKS } from "./queries";
 import BooksList from "./components/BooksList/BooksList";
 
 const App = () => {
@@ -13,12 +13,14 @@ const App = () => {
     return <Container className="p-3">loading...</Container>;
   }
 
+  const books = result.data.allBooks;
+
   return (
-    <LibraryContext.Provider value={}>
+    <LibraryContextProvider>
       <Container className="p-3">
-        <BooksList books={result.data.allBooks} />
+        <BooksList books={books} />
       </Container>
-    </LibraryContext.Provider>
+    </LibraryContextProvider>
   );
 };
 
