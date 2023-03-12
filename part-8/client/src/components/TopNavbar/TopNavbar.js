@@ -14,6 +14,9 @@ function TopNavbar() {
           <Nav.Link as={Link} to="/books">
             Books
           </Nav.Link>
+          <Nav.Link as={Link} to="/books/add">
+            Add book
+          </Nav.Link>
           <Nav.Link as={Link} to="/authors">
             Authors
           </Nav.Link>

@@ -2,22 +2,27 @@ import { createContext, useReducer } from "react";
 
 const libraryReducer = (state, action) => {
   switch (action.type) {
-    case "ADD_BOOKS": {
+    case "UPDATE_BOOK_SEARCH": {
       return {
         ...state,
-        books: [...state.books, ...action.payload],
+        bookSearchString: action.payload,
       };
     }
-    default: {
-      return state;
+    case "UPDATE_AUTHOR_SEARCH": {
+      return {
+        ...state,
+        authorSearchString: action.payload,
+      };
     }
+    default:
+      return state;
   }
 };
 
 const LibraryContext = createContext();
 const initialState = {
-  books: [],
-  authors: [],
+  bookSearchString: "",
+  authorSearchString: "",
 };
 
 export function LibraryContextProvider({ children }) {
