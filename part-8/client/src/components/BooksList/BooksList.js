@@ -1,9 +1,11 @@
 import Table from "react-bootstrap/Table";
-import { ALL_BOOKS } from "../../queries";
+import { ALL_BOOKS, FIND_BOOKS_BY_AUTHOR } from "../../queries";
 import { useQuery } from "@apollo/client";
 
 function BooksList() {
-  const result = useQuery(ALL_BOOKS);
+  const result = useQuery(FIND_BOOKS_BY_AUTHOR, {
+    variables: { author: "Fyodor Dostoevsky" },
+  });
   if (result.loading) {
     return <div>loading...</div>;
   }
