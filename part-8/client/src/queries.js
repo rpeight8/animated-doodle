@@ -20,12 +20,31 @@ export const ALL_AUTHORS = gql`
 `;
 
 export const FIND_BOOKS_BY_AUTHOR = gql`
-	query findBooksByAuthor($author: String!) {
-		allBooks(author: $author) {
-			title
-			author
-			id
-		}
-	}
+  query findBooksByAuthor($title: String!) {
+    allBooks(title: $title) {
+      title
+      author
+      id
+    }
+  }
 `;
 
+export const FIND_BOOKS = gql`
+  query findBooksByTitle($title: String!) {
+    allBooks(title: $title) {
+      title
+      author
+      id
+    }
+  }
+`;
+
+export const ADD_BOOK = gql`
+  mutation addBook($title: String!, $author: String!) {
+    addBook(title: $title, author: $author) {
+      title
+      author
+      id
+    }
+  }
+`;

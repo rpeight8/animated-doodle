@@ -14,6 +14,12 @@ const libraryReducer = (state, action) => {
         authorSearchString: action.payload,
       };
     }
+    case "SET_ERROR": {
+      return {
+        ...state,
+        error: action.payload,
+      };
+    }
     default:
       return state;
   }
@@ -23,6 +29,7 @@ const LibraryContext = createContext();
 const initialState = {
   bookSearchString: "",
   authorSearchString: "",
+  error: "",
 };
 
 export function LibraryContextProvider({ children }) {
