@@ -1,6 +1,5 @@
 import { createContext, useReducer } from "react";
 
-
 const libraryReducer = (state, action) => {
   switch (action.type) {
     case "ADD_BOOKS": {
@@ -21,14 +20,14 @@ const initialState = {
   authors: [],
 };
 
-function LibraryContextProvider({ children }) {
-  const [count, dispatch] = useReducer(libraryReducer, initialState);
+export function LibraryContextProvider({ children }) {
+  const [library, dispatch] = useReducer(libraryReducer, initialState);
 
   return (
-    <LibraryContext.Provider value={{ count, dispatch }}>
+    <LibraryContext.Provider value={[library, dispatch]}>
       {children}
     </LibraryContext.Provider>
   );
 }
 
-export default LibraryContextProvider;
+export default LibraryContext;
