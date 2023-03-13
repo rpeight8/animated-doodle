@@ -49,7 +49,6 @@ const typeDefs = `
 	type Book {
 		title: String!
 		author: String!
-		published: Int!
 		id: ID!
 	}
 
@@ -63,19 +62,24 @@ const typeDefs = `
 		bookCount: Int!
 		authorCount: Int!
 		allAuthors: [Author!]! 
-		allBooks(author: String, published: Int): [Book!]!
+		allBooks(author: String, title: String): [Book!]!
 	}
+	
 
 	type Mutation {
 		addBook(
 			title: String!
 			author: String!
-			published: Int!
 		): Book
 		editAuthor(
 			name: String!
 			setNewName: String!
 		): Author
+		editBook(
+			id: ID!
+			title: String!
+			author: String!
+		): Book
 	}
 `;
 
@@ -85,29 +89,19 @@ const resolvers = {
     authorCount: () => authors.length,
 
     allBooks: (root, args) => {
-      if (!args.author && !args.published) {
+      if (!args.author && !args.title) {
         return books;
-      }
-      const { id: authorId } = authors.find(
-        (author) => author.name === args.author
-      );
-
-      if (!authorId) {
-        throw new GraphQLError("Author does not exist", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args.author,
-          },
-        });
       }
 
       return books.filter((book) => {
-        if (authorId && book.author !== authorId) {
+        if (args.authorId && book.author !== args.authorId) {
           return false;
         }
-        if (args.published && book.published !== args.published) {
+
+        if (args.title && !book.title.includes(args.title)) {
           return false;
         }
+
         return true;
       });
     },
@@ -130,10 +124,26 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
-      let author = authors.find((a) => a.name === args.author);
+      if (
+        books.some(
+          (book) => book.title === args.title && book.author === args.author
+        )
+      )
+        throw new GraphQLError("Book already exists", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.title,
+          },
+        });
+
+      let author = authors.find((a) => a.id === args.author);
       if (!author) {
-        author = { name: args.author, id: uuid() };
-        authors = authors.concat(author);
+        throw new GraphQLError("Author does not exist", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.author,
+          },
+        });
       }
 
       const book = { ...args, id: uuid(), author: author.id };
@@ -154,6 +164,33 @@ const resolvers = {
       const updatedAuthor = { ...author, name: args.setNewName };
       authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a));
       return updatedAuthor;
+    },
+
+    editBook: (root, args) => {
+      console.log(args);
+      const book = books.find((b) => b.id === args.id);
+      if (!book) {
+        throw new GraphQLError("Book does not exist", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.id,
+          },
+        });
+      }
+
+      const author = authors.find((a) => a.name === args.author);
+      if (!author) {
+        throw new GraphQLError("Author does not exist", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.author,
+          },
+        });
+      }
+
+      const updatedBook = { ...book, title: args.title, author: author.id };
+      books = books.map((b) => (b.id === args.id ? updatedBook : b));
+      return updatedBook;
     },
   },
 };

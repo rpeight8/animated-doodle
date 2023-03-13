@@ -3,6 +3,7 @@ import BooksList from "../BooksList/BooksList";
 import BookSearch from "../BookSearch/BookSearch";
 
 function BookPage({ showForm }) {
+	console.log("BookPage: render");
   return (
     <>
       <BookSearch />

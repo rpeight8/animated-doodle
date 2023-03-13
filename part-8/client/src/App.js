@@ -15,6 +15,10 @@ const App = () => {
   const { error } = state;
 
   useEffect(() => {
+    if (!error) {
+      return;
+    }
+
     const timeId = setTimeout(() => {
       dispatch({ type: "SET_ERROR", payload: "" });
     }, 2000);

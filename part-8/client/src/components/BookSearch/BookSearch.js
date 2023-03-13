@@ -5,6 +5,7 @@ import { useContext } from "react";
 function BookSearch() {
   const [state, dispatch] = useContext(LibraryContext);
 
+	console.log("BookSearch: render");
   return (
     <div>
       <input

@@ -10,6 +10,7 @@ function AuthorsList() {
 
   const authors = result.data.allAuthors;
 
+  console.log("AuthorList: render");
   return (
     <Table striped bordered hover>
       <thead>

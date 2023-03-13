@@ -29,6 +29,7 @@ function BookForm() {
   }
 
   const authors = result.data.allAuthors;
+	console.log("BookForm: render");
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3">
