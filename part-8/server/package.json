@@ -1,14 +1,15 @@
 {
-  "type": "module",
   "dependencies": {
     "@apollo/server": "^4.4.1",
+    "dotenv": "^16.0.3",
     "graphql": "^16.6.0",
+    "mongoose": "^7.0.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.21"
   },
   "scripts": {
-    "start": "nodemon ./ex.js"
+    "start": "nodemon ./src/index.js"
   }
 }

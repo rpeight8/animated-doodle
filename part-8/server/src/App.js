@@ -1,49 +1,24 @@
-import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
-import { GraphQLError } from "graphql";
-import { v4 as uuid } from "uuid";
+const { ApolloServer } = require("@apollo/server");
+const { GraphQLError } = require("graphql");
+const { v4: uuid } = require("uuid");
+const mongoose = require("mongoose");
+const Book = require("./models/Book");
+const Author = require("./models/Author");
+const config = require("./configs/config");
 
-let authors = [
-  {
-    name: "Robert Martin",
-    id: uuid(),
-  },
-  {
-    name: "Martin Fowler",
-    id: uuid(),
-  },
-  {
-    name: "Fyodor Dostoevsky",
-    id: uuid(),
-  },
-];
+mongoose.set("strictQuery", false);
 
-let books = [
-  {
-    title: "Harry Potter and the Chamber of Secrets",
-    author: authors[0].id,
-    published: 1998,
-    id: uuid(),
-  },
-  {
-    title: "Jurassic Park",
-    author: authors[1].id,
-    published: 1990,
-    id: uuid(),
-  },
-  {
-    title: "The Lord of the Rings",
-    author: authors[2].id,
-    published: 1954,
-    id: uuid(),
-  },
-  {
-    title: "The Hobbit",
-    author: authors[2].id,
-    published: 1937,
-    id: uuid(),
-  },
-];
+const connectDB = async () => {
+  try {
+    const connection = await mongoose.connect(config.MONGODB_URI);
+    console.log(`Connected to MongoDB: ${connection.connection.host}`);
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+};
+
+connectDB();
 
 const typeDefs = `
 	type Book {
@@ -85,10 +60,10 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-
-    allBooks: (root, args) => {
+    bookCount: () => Book.countDocuments({}),
+    authorCount: () => Author.countDocuments({}),
+    allBooks: async (root, args) => {
+      const books = await Book.find({});
       if (!args.author && !args.title) {
         return books;
       }
@@ -106,18 +81,12 @@ const resolvers = {
       });
     },
 
-    allAuthors: () => {
-      return authors.map((author) => {
-        return {
-          ...author,
-          bookCount: books.filter((book) => book.author === author.id).length,
-        };
-      });
-    },
+    allAuthors: async () => Author.find({}),
   },
 
   Book: {
-    author: (root) => {
+    author: async (root) => {
+      const authors = await Author.find({});
       const author = authors.find((author) => author.id === root.author);
       return author.name;
     },
@@ -195,11 +164,9 @@ const resolvers = {
   },
 };
 
-const server = new ApolloServer({
+const app = new ApolloServer({
   typeDefs,
   resolvers,
 });
 
-startStandaloneServer(server, {
-  port: 4000,
-});
+module.exports = app;
