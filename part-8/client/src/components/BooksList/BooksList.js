@@ -1,7 +1,12 @@
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
-import { FIND_BOOKS, ALL_AUTHORS, EDIT_BOOK } from "../../queries";
+import {
+  ALL_AUTHORS,
+  EDIT_BOOK,
+  ALL_BOOKS,
+  FIND_BOOKS_BY_TITLE,
+} from "../../queries";
 import { useQuery, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
 import LibraryContext from "../../LibraryContext";
@@ -15,10 +20,18 @@ function BooksList() {
   });
 
   const [editBookMutation] = useMutation(EDIT_BOOK);
+  const isSearch = state.bookSearchString.length > 0;
 
-  const result = useQuery(FIND_BOOKS, {
-    variables: { title: state.bookSearchString },
-  });
+  const result = useQuery(
+    isSearch ? FIND_BOOKS_BY_TITLE : ALL_BOOKS,
+    isSearch
+      ? {
+          variables: { title: state.bookSearchString },
+        }
+      : {}
+  );
+
+  // const result = useQuery(ALL_BOOKS);
 
   const authorsResult = useQuery(ALL_AUTHORS);
 
@@ -41,7 +54,7 @@ function BooksList() {
     turnOffEdit();
   };
 
-  const books = result.data.allBooks;
+  const books = result.data[isSearch ? "findBook" : "allBooks"];
   const authors = authorsResult.data.allAuthors;
   console.log("BookList: render");
   return (

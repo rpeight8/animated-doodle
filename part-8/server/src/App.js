@@ -30,14 +30,14 @@ const typeDefs = `
 	type Author {
 		name: String!
 		id: ID!,
-		bookCount: Int!
 	}
 
 	type Query {
 		bookCount: Int!
 		authorCount: Int!
 		allAuthors: [Author!]! 
-		allBooks(author: String, title: String): [Book!]!
+		allBooks: [Book!]!
+		findBook(title: String!): [Book!]!
 	}
 	
 
@@ -62,23 +62,25 @@ const resolvers = {
   Query: {
     bookCount: () => Book.countDocuments({}),
     authorCount: () => Author.countDocuments({}),
-    allBooks: async (root, args) => {
-      const books = await Book.find({});
-      if (!args.author && !args.title) {
-        return books;
-      }
+    allBooks: async () => {
+      return Book.find({});
+      // if (!args.author && !args.title) {
+      //   return Book.find({});
+      // }
+      // const queries = [];
+      // if (args.author) {
+      //   queries.push({ author: args.author });
+      // }
+      // if (args.title) {
+      //   queries.push({ title: args.title });
+      // }
 
-      return books.filter((book) => {
-        if (args.authorId && book.author !== args.authorId) {
-          return false;
-        }
-
-        if (args.title && !book.title.includes(args.title)) {
-          return false;
-        }
-
-        return true;
-      });
+      // return Book.find({
+      //   $and: queries,
+      // });
+    },
+    findBook: async (root, args) => {
+      return Book.find({ title: new RegExp(args.title) });
     },
 
     allAuthors: async () => Author.find({}),
@@ -86,26 +88,14 @@ const resolvers = {
 
   Book: {
     author: async (root) => {
-      const authors = await Author.find({});
-      const author = authors.find((author) => author.id === root.author);
-      return author.name;
+      const author = await Author.findById(root.author);
+      return author?.name;
     },
   },
   Mutation: {
-    addBook: (root, args) => {
-      if (
-        books.some(
-          (book) => book.title === args.title && book.author === args.author
-        )
-      )
-        throw new GraphQLError("Book already exists", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args.title,
-          },
-        });
+    addBook: async (root, args) => {
+      const author = await Author.findById(args.author);
 
-      let author = authors.find((a) => a.id === args.author);
       if (!author) {
         throw new GraphQLError("Author does not exist", {
           extensions: {
@@ -115,10 +105,20 @@ const resolvers = {
         });
       }
 
-      const book = { ...args, id: uuid(), author: author.id };
-      books = books.concat(book);
-      return book;
+      if (await Book.findOne({ title: args.title, author: author.id })) {
+        throw new GraphQLError("Book already exists", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: [args.title, args.author],
+          },
+        });
+      }
+
+      const book = new Book({ ...args });
+
+      return book.save();
     },
+
     editAuthor: (root, args) => {
       const author = authors.find((a) => a.name === args.name);
       if (!author) {
@@ -135,9 +135,11 @@ const resolvers = {
       return updatedAuthor;
     },
 
-    editBook: (root, args) => {
-      console.log(args);
-      const book = books.find((b) => b.id === args.id);
+    editBook: async (root, args) => {
+      const [book, author] = await Promise.all([
+        Book.findById(args.id),
+        Author.findOne({ name: args.author }),
+      ]);
       if (!book) {
         throw new GraphQLError("Book does not exist", {
           extensions: {
@@ -147,7 +149,6 @@ const resolvers = {
         });
       }
 
-      const author = authors.find((a) => a.name === args.author);
       if (!author) {
         throw new GraphQLError("Author does not exist", {
           extensions: {
@@ -157,9 +158,10 @@ const resolvers = {
         });
       }
 
-      const updatedBook = { ...book, title: args.title, author: author.id };
-      books = books.map((b) => (b.id === args.id ? updatedBook : b));
-      return updatedBook;
+      book.title = args.title;
+      book.author = author.id;
+
+      return book.save();
     },
   },
 };

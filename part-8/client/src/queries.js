@@ -29,6 +29,16 @@ export const FIND_BOOKS_BY_AUTHOR = gql`
   }
 `;
 
+export const FIND_BOOKS_BY_TITLE = gql`
+  query findBooksByTitle($title: String!) {
+    findBook(title: $title) {
+      title
+      author
+      id
+    }
+  }
+`;
+
 export const FIND_BOOKS = gql`
   query findBooksByTitle($title: String!) {
     allBooks(title: $title) {

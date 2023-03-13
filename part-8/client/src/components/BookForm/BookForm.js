@@ -1,14 +1,23 @@
 import { useState, useContext } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useQuery, useMutation } from "@apollo/client";
-import { ALL_AUTHORS, ADD_BOOK, FIND_BOOKS } from "../../queries";
+import {
+  ALL_AUTHORS,
+  ADD_BOOK,
+  FIND_BOOKS_BY_TITLE,
+  ALL_BOOKS,
+} from "../../queries";
 import LibraryContext from "../../LibraryContext";
 
 function BookForm() {
   const [state, dispatch] = useContext(LibraryContext);
   const [createBook] = useMutation(ADD_BOOK, {
     refetchQueries: [
-      { query: FIND_BOOKS, variables: { title: state.bookSearchString } },
+      {
+        query: FIND_BOOKS_BY_TITLE,
+        variables: { title: state.bookSearchString },
+      },
+      { query: ALL_BOOKS },
     ],
     onError: (error) => {
       const respError = error.graphQLErrors[0].message;
@@ -21,6 +30,8 @@ function BookForm() {
   const handleSubmit = (event) => {
     event.preventDefault();
     createBook({ variables: { title, author, published: 1337 } });
+    setTitle("");
+    setAuthor("");
   };
 
   const result = useQuery(ALL_AUTHORS);
@@ -29,7 +40,7 @@ function BookForm() {
   }
 
   const authors = result.data.allAuthors;
-	console.log("BookForm: render");
+  console.log("BookForm: render");
   return (
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3">
