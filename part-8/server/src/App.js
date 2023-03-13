@@ -1,9 +1,11 @@
 const { ApolloServer } = require("@apollo/server");
 const { GraphQLError } = require("graphql");
+const jwt = require("jsonwebtoken");
 const { v4: uuid } = require("uuid");
 const mongoose = require("mongoose");
 const Book = require("./models/Book");
 const Author = require("./models/Author");
+const User = require("./models/User");
 const config = require("./configs/config");
 
 mongoose.set("strictQuery", false);
@@ -32,16 +34,36 @@ const typeDefs = `
 		id: ID!,
 	}
 
+	type User {
+		username: String!
+		books: [Book!]!
+		id: ID!
+	}
+
+	type Token {
+		value: String!
+	}
+
 	type Query {
 		bookCount: Int!
 		authorCount: Int!
 		allAuthors: [Author!]! 
 		allBooks: [Book!]!
 		findBook(title: String!): [Book!]!
+		me: User
 	}
-	
 
 	type Mutation {
+		createUser(
+			username: String!
+		): User
+		login(
+			username: String!
+			password: String!
+		): Token
+		addOwnBook(
+			id: ID!
+		): User
 		addBook(
 			title: String!
 			author: String!
@@ -62,8 +84,18 @@ const resolvers = {
   Query: {
     bookCount: () => Book.countDocuments({}),
     authorCount: () => Author.countDocuments({}),
-    allBooks: async () => {
-      return Book.find({});
+    allBooks: async (root, args, context) => {
+      const currentUser = context.currentUser;
+
+      if (!currentUser) {
+        throw new GraphQLError("not authenticated", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+
+      return currentUser.books;
       // if (!args.author && !args.title) {
       //   return Book.find({});
       // }
@@ -84,6 +116,7 @@ const resolvers = {
     },
 
     allAuthors: async () => Author.find({}),
+    me: (root, args, context) => context.currentUser,
   },
 
   Book: {
@@ -93,8 +126,50 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    createUser: async (root, args) => {
       try {
+        const user = new User({ username: args.username });
+
+        return user.save();
+      } catch (err) {
+        throw new GraphQLError("Something went wrong", {
+          extensions: {
+            code: "INTERNAL_SERVER_ERROR",
+            err,
+          },
+        });
+      }
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== config.SECRET) {
+        throw new GraphQLError("wrong credentials", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, config.SECRET) };
+    },
+    addBook: async (root, args, context) => {
+      try {
+        const currentUser = context.currentUser;
+
+        if (!currentUser) {
+          throw new GraphQLError("not authenticated", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+            },
+          });
+        }
+
         const author = await Author.findById(args.author);
 
         if (!author) {
@@ -117,7 +192,46 @@ const resolvers = {
 
         const book = new Book({ ...args });
 
-        return book.save();
+        await book.save();
+        currentUser.books = currentUser.books.concat({ id: book.id });
+      } catch (err) {
+        if (err instanceof GraphQLError) {
+          throw err;
+        }
+        throw new GraphQLError("Something went wrong", {
+          extensions: {
+            code: "INTERNAL_SERVER_ERROR",
+            err,
+          },
+        });
+      }
+    },
+
+    addOwnBook: async (root, args, context) => {
+      try {
+        const currentUser = context.currentUser;
+
+        if (!currentUser) {
+          throw new GraphQLError("not authenticated", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+            },
+          });
+        }
+
+        const book = await Book.findById(args.id);
+        if (!book) {
+          throw new GraphQLError("Book does not exist", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: [args.id],
+            },
+          });
+        }
+
+        currentUser.books = currentUser.books.concat(book);
+        await currentUser.save();
+        return currentUser;
       } catch (err) {
         if (err instanceof GraphQLError) {
           throw err;

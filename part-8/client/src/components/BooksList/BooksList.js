@@ -12,7 +12,7 @@ import { useContext, useState } from "react";
 import LibraryContext from "../../LibraryContext";
 
 function BooksList() {
-  const [state, _] = useContext(LibraryContext);
+  const [state, dispatch] = useContext(LibraryContext);
   const [editBook, setEditBook] = useState({
     id: null,
     title: null,
@@ -37,6 +37,12 @@ function BooksList() {
 
   if (result.loading || authorsResult.loading) {
     return <div>loading...</div>;
+  }
+
+  if (result.error || authorsResult.error) {
+    const respError = result.error.graphQLErrors[0].message;
+    // dispatch({ type: "SET_ERROR", payload: respError });
+    return <div>{respError}</div>;
   }
 
   const turnOffEdit = () => {
