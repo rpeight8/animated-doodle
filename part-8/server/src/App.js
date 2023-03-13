@@ -94,74 +94,112 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      const author = await Author.findById(args.author);
+      try {
+        const author = await Author.findById(args.author);
 
-      if (!author) {
-        throw new GraphQLError("Author does not exist", {
+        if (!author) {
+          throw new GraphQLError("Author does not exist", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.author,
+            },
+          });
+        }
+
+        if (await Book.findOne({ title: args.title, author: author.id })) {
+          throw new GraphQLError("Book already exists", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: [args.title, args.author],
+            },
+          });
+        }
+
+        const book = new Book({ ...args });
+
+        return book.save();
+      } catch (err) {
+        if (err instanceof GraphQLError) {
+          throw err;
+        }
+        throw new GraphQLError("Something went wrong", {
           extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args.author,
+            code: "INTERNAL_SERVER_ERROR",
+            err,
           },
         });
       }
-
-      if (await Book.findOne({ title: args.title, author: author.id })) {
-        throw new GraphQLError("Book already exists", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: [args.title, args.author],
-          },
-        });
-      }
-
-      const book = new Book({ ...args });
-
-      return book.save();
     },
 
     editAuthor: (root, args) => {
-      const author = authors.find((a) => a.name === args.name);
-      if (!author) {
-        throw new GraphQLError("Author does not exist", {
+      try {
+        const author = authors.find((a) => a.name === args.name);
+        if (!author) {
+          throw new GraphQLError("Author does not exist", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.author,
+            },
+          });
+        }
+
+        const updatedAuthor = { ...author, name: args.setNewName };
+        authors = authors.map((a) =>
+          a.name === args.name ? updatedAuthor : a
+        );
+        return updatedAuthor;
+      } catch (err) {
+        if (err instanceof GraphQLError) {
+          throw err;
+        }
+        throw new GraphQLError("Something went wrong", {
           extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args.author,
+            code: "INTERNAL_SERVER_ERROR",
+            err,
           },
         });
       }
-
-      const updatedAuthor = { ...author, name: args.setNewName };
-      authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a));
-      return updatedAuthor;
     },
 
     editBook: async (root, args) => {
-      const [book, author] = await Promise.all([
-        Book.findById(args.id),
-        Author.findOne({ name: args.author }),
-      ]);
-      if (!book) {
-        throw new GraphQLError("Book does not exist", {
+      try {
+        const [book, author] = await Promise.all([
+          Book.findById(args.id),
+          Author.findOne({ name: args.author }),
+        ]);
+        if (!book) {
+          throw new GraphQLError("Book does not exist", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.id,
+            },
+          });
+        }
+
+        if (!author) {
+          throw new GraphQLError("Author does not exist", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.author,
+            },
+          });
+        }
+
+        book.title = args.title;
+        book.author = author.id;
+
+        return book.save();
+      } catch (err) {
+        if (err instanceof GraphQLError) {
+          throw err;
+        }
+        throw new GraphQLError("Something went wrong", {
           extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args.id,
+            code: "INTERNAL_SERVER_ERROR",
+            err,
           },
         });
       }
-
-      if (!author) {
-        throw new GraphQLError("Author does not exist", {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: args.author,
-          },
-        });
-      }
-
-      book.title = args.title;
-      book.author = author.id;
-
-      return book.save();
     },
   },
 };
