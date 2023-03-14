@@ -8,6 +8,7 @@ import Alert from "react-bootstrap/Alert";
 import AuthorsList from "./components/AuthorsList/AuthorsList";
 import TopNavbar from "./components/TopNavbar/TopNavbar";
 import BookPage from "./components/BookPage/BookPage";
+import LoginForm from "./components/LoginForm/LoginForm";
 import LibraryContext from "./LibraryContext";
 
 const App = () => {
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/" element={<div>Home</div>} />
         <Route path="books" element={<BookPage />} />
         <Route path="authors" element={<AuthorsList />} />
+        <Route path="login" element={<LoginForm />} />
       </Routes>
     </Container>
   );

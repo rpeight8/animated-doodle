@@ -17,6 +17,9 @@ function TopNavbar() {
           <Nav.Link as={Link} to="/authors">
             Authors
           </Nav.Link>
+          <Nav.Link as={Link} to="/login">
+            Login
+          </Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

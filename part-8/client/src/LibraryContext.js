@@ -20,6 +20,12 @@ const libraryReducer = (state, action) => {
         error: action.payload,
       };
     }
+    case "SET_TOKEN": {
+      return {
+        ...state,
+        token: action.payload,
+      };
+    }
     default:
       return state;
   }
