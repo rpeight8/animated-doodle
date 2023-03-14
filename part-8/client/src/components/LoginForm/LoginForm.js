@@ -2,16 +2,21 @@ import { Form, Button } from "react-bootstrap";
 import { useState, useContext, useEffect } from "react";
 import { LOGIN } from "../../queries";
 import { useMutation, useApolloClient } from "@apollo/client";
-import LibraryContext from "../../LibraryContext";
+import { AuthContext } from "../../providers/AuthProvider";
+import { NotificationContext } from "../../providers/NotificationProvider";
 
 const LoginForm = () => {
   const client = useApolloClient();
-  const [state, dispatch] = useContext(LibraryContext);
+  const { user, setUser, logout } = useContext(AuthContext);
+  const { setNotification } = useContext(NotificationContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
-      dispatch({ type: "SET_ERROR", payload: error.graphQLErrors[0].message });
+      setNotification({
+        message: error.message ? error.message : error.graphQLErrors[0].message,
+        type: "danger",
+      });
     },
   });
 
@@ -19,34 +24,44 @@ const LoginForm = () => {
     if (result.data) {
       const token = result.data.login.value;
       console.log(token);
-      dispatch({ type: "SET_TOKEN", payload: token });
-      localStorage.setItem("token", token);
+      setUser({
+        username,
+        token,
+      });
+      setNotification({
+        message: `Welcome ${username}`,
+        type: "success",
+      });
       client.resetStore();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.data]);
 
-  const logout = () => {
-    dispatch({ type: "SET_TOKEN", payload: "" });
-    localStorage.removeItem("token");
-    client.resetStore();
-  };
-
   const onSubmit = (e) => {
     e.preventDefault();
 
-    const user = { username, password };
-    login({ variables: user });
+    login({ variables: { username, password } });
   };
 
+  const onLogout = () => {
+    logout();
+    setNotification({
+      message: "Logged out",
+      type: "success",
+    });
+  };
+
+  console.log("LoginForm: render");
   return (
     <>
-      {(state.token && (
-        <div>
-          <Button variant="primary" onClick={logout}>
+      {(user && user.username && (
+        <>
+          {" "}
+          <div>{user.username} logged in</div>{" "}
+          <Button variant="primary" type="submit" onClick={onLogout}>
             Logout
           </Button>
-        </div>
+        </>
       )) || (
         <Form onSubmit={onSubmit}>
           <Form.Group controlId="formBasicEmail">
@@ -75,7 +90,7 @@ const LoginForm = () => {
             />
           </Form.Group>
           <Button variant="primary" type="submit">
-            Submit
+            Login
           </Button>
         </Form>
       )}

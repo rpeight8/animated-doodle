@@ -1,52 +1,21 @@
-import { createContext, useReducer } from "react";
+import { ProviderComposer, provider } from "./providers/ProviderComposer";
+import { ApolloProvider } from "@apollo/client";
+import Client from "./ApolloClient";
+import { BrowserRouter } from "react-router-dom";
+import { NotificationContextProvider } from "./providers/NotificationProvider";
+import { AuthContextProvider } from "./providers/AuthProvider";
 
-const libraryReducer = (state, action) => {
-  switch (action.type) {
-    case "UPDATE_BOOK_SEARCH": {
-      return {
-        ...state,
-        bookSearchString: action.payload,
-      };
-    }
-    case "UPDATE_AUTHOR_SEARCH": {
-      return {
-        ...state,
-        authorSearchString: action.payload,
-      };
-    }
-    case "SET_ERROR": {
-      return {
-        ...state,
-        error: action.payload,
-      };
-    }
-    case "SET_TOKEN": {
-      return {
-        ...state,
-        token: action.payload,
-      };
-    }
-    default:
-      return state;
-  }
-};
-
-const LibraryContext = createContext();
-const initialState = {
-  bookSearchString: "",
-  authorSearchString: "",
-  error: "",
-	token: "",
-};
-
-export function LibraryContextProvider({ children }) {
-  const [library, dispatch] = useReducer(libraryReducer, initialState);
-
+export const LibraryContext = ({ children }) => {
   return (
-    <LibraryContext.Provider value={[library, dispatch]}>
+    <ProviderComposer
+      providers={[
+        provider(AuthContextProvider),
+        provider(ApolloProvider, { client: Client }),
+        provider(BrowserRouter),
+        provider(NotificationContextProvider),
+      ]}
+    >
       {children}
-    </LibraryContext.Provider>
+    </ProviderComposer>
   );
-}
-
-export default LibraryContext;
+};

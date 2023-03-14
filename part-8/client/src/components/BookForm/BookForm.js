@@ -1,5 +1,5 @@
-import { useState, useContext } from "react";
-import { Form, Button } from "react-bootstrap";
+import { useState, useContext, useEffect } from "react";
+import { Form, Button, ModalTitle } from "react-bootstrap";
 import { useQuery, useMutation } from "@apollo/client";
 import {
   ALL_AUTHORS,
@@ -8,21 +8,20 @@ import {
   ALL_BOOKS,
   ADD_OWN_BOOK,
 } from "../../queries";
-import LibraryContext from "../../LibraryContext";
+import { NotificationContext } from "../../providers/NotificationProvider";
 
 function BookForm() {
-  const [state, dispatch] = useContext(LibraryContext);
+  const { setNotification } = useContext(NotificationContext);
   const [createBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [
-      {
-        query: FIND_BOOKS_BY_TITLE,
-        variables: { title: state.bookSearchString },
-      },
-      { query: ALL_BOOKS },
-    ],
+    refetchQueries: [{ query: ALL_BOOKS }],
     onError: (error) => {
-      const respError = error.graphQLErrors[0].message;
-      dispatch({ type: "SET_ERROR", payload: respError });
+      const respError = error.message
+        ? error.message
+        : error.graphQLErrors[0].message;
+      setNotification({
+        message: respError,
+        type: "danger",
+      });
     },
   });
   const [title, setTitle] = useState("");
@@ -31,17 +30,33 @@ function BookForm() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    createBook({ variables: { title, author, published: 1337 } });
+    createBook({ variables: { title, author } });
     setTitle("");
     setAuthor("");
   };
 
-  const result = useQuery(ALL_AUTHORS);
-  if (result.loading) {
+  useEffect(() => {}, []);
+
+  let authors = [];
+  const { data, loading } = useQuery(ALL_AUTHORS, {
+    onError: (error) => {
+      const respError = error.message
+        ? error.message
+        : error.graphQLErrors[0].message;
+      setNotification({
+        message: respError,
+        type: "danger",
+      });
+    },
+  });
+  if (loading) {
     return <div>loading...</div>;
   }
 
-  const authors = result.data.allAuthors;
+  if (data) {
+    authors = data.allAuthors;
+  }
+
   console.log("BookForm: render");
   return (
     <Form onSubmit={handleSubmit}>
@@ -50,6 +65,7 @@ function BookForm() {
         <Form.Control
           required
           placeholder="Enter book title"
+          value={title}
           onChange={(event) => {
             setTitle(event.target.value);
           }}
@@ -59,6 +75,7 @@ function BookForm() {
         <Form.Label>Author</Form.Label>
         <Form.Select
           required
+          value={author}
           onChange={(event) => {
             setAuthor(
               authors.find((author) => author.name === event.target.value).id

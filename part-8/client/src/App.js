@@ -5,41 +5,26 @@ import Container from "react-bootstrap/Container";
 
 import Alert from "react-bootstrap/Alert";
 
-import AuthorsList from "./components/AuthorsList/AuthorsList";
+// import AuthorsList from "./components/AuthorsList/AuthorsList";
 import TopNavbar from "./components/TopNavbar/TopNavbar";
+import Notification from "./components/Notification/Notification";
 import BookPage from "./components/BookPage/BookPage";
 import LoginForm from "./components/LoginForm/LoginForm";
-import LibraryContext from "./LibraryContext";
+import { AuthContext } from "./providers/AuthProvider";
 
 const App = () => {
-  const [state, dispatch] = useContext(LibraryContext);
-  const { error } = state;
-
-  useEffect(() => {
-    if (!error) {
-      return;
-    }
-
-    const timeId = setTimeout(() => {
-      dispatch({ type: "SET_ERROR", payload: "" });
-    }, 2000);
-
-    return () => {
-      clearTimeout(timeId);
-    };
-  });
-
+  const { user } = useContext(AuthContext);
   return (
     <Container className="p-3">
       <TopNavbar />
-      <Alert variant="danger" transition={false} show={error}>
-        {error}
-      </Alert>
+      <Notification />
       <Routes>
         <Route path="/" element={<div>Home</div>} />
         <Route path="books" element={<BookPage />} />
-        <Route path="authors" element={<AuthorsList />} />
-        <Route path="login" element={<LoginForm />} />
+        <Route path="authors" element={<div>All authors</div>} />
+        {user && <Route path="ownedBooks" element={<div>My books</div>} />}
+        <Route path="auth" element={<LoginForm />} />
+        {}
       </Routes>
     </Container>
   );

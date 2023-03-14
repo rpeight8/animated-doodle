@@ -9,10 +9,10 @@ import {
 } from "../../queries";
 import { useQuery, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
-import LibraryContext from "../../LibraryContext";
+import { NotificationContext } from "../../providers/NotificationProvider";
 
 function BooksList() {
-  const [state, dispatch] = useContext(LibraryContext);
+  const { setNotification } = useContext(NotificationContext);
   const [editBook, setEditBook] = useState({
     id: null,
     title: null,
@@ -20,29 +20,40 @@ function BooksList() {
   });
 
   const [editBookMutation] = useMutation(EDIT_BOOK);
-  const isSearch = state.bookSearchString.length > 0;
 
-  const result = useQuery(
-    isSearch ? FIND_BOOKS_BY_TITLE : ALL_BOOKS,
-    isSearch
-      ? {
-          variables: { title: state.bookSearchString },
-        }
-      : {}
-  );
+  let books = [],
+    authors = [];
+  const { data: booksData, loading: booksLoading } = useQuery(ALL_BOOKS, {
+    onError: (error) => {
+      const respError = error.message
+        ? error.message
+        : error.graphQLErrors[0].message;
+      setNotification({
+        message: respError,
+        type: "danger",
+      });
+    },
+  });
 
-  // const result = useQuery(ALL_BOOKS);
+  const { data: authorsData, loading: authorsLoading } = useQuery(ALL_AUTHORS, {
+    onError: (error) => {
+      const respError = error.message
+        ? error.message
+        : error.graphQLErrors[0].message;
+      setNotification({
+        message: respError,
+        type: "danger",
+      });
+    },
+  });
 
-  const authorsResult = useQuery(ALL_AUTHORS);
-
-  if (result.loading || authorsResult.loading) {
+  if (booksLoading || authorsLoading) {
     return <div>loading...</div>;
   }
 
-  if (result.error || authorsResult.error) {
-    const respError = result.error.graphQLErrors[0].message;
-    // dispatch({ type: "SET_ERROR", payload: respError });
-    return <div>{respError}</div>;
+  if (booksData && authorsData) {
+    books = booksData.allBooks;
+    authors = authorsData.allAuthors;
   }
 
   const turnOffEdit = () => {
@@ -60,8 +71,6 @@ function BooksList() {
     turnOffEdit();
   };
 
-  const books = result.data[isSearch ? "findBook" : "allBooks"];
-  const authors = authorsResult.data.allAuthors;
   console.log("BookList: render");
   return (
     <>
