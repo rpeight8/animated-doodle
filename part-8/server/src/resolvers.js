@@ -8,7 +8,7 @@ const config = require("./configs/config");
 
 const resolvers = {
   Query: {
-    allBooks: async (root, args, context) => {
+    ownedBooks: async (root, args, context) => {
       const currentUser = context.currentUser;
 
       if (!currentUser) {
@@ -20,6 +20,10 @@ const resolvers = {
       }
 
       return currentUser.books;
+    },
+
+    allBooks: async (root, args, context) => {
+      return Book.find({});
     },
     findBook: async (root, args) => {
       return Book.find({ title: new RegExp(args.title) });

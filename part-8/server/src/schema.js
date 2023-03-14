@@ -21,10 +21,11 @@ const typeDefs = `
 	}
 
 	type Query {
-		allAuthors(name: String!): [Author!]! 
-		allBooks(title: String!, author: String!): [Book!]!
+		allAuthors(name: String): [Author]! 
+		allBooks(title: String, author: String): [Book]!
 		findBook(title: String!): Book
 		findAuthor(name: String!): Author
+		ownedBooks: [Book]
 		me: User
 	}
 
