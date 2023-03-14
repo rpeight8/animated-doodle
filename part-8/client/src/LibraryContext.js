@@ -36,6 +36,7 @@ const initialState = {
   bookSearchString: "",
   authorSearchString: "",
   error: "",
+	token: "",
 };
 
 export function LibraryContextProvider({ children }) {

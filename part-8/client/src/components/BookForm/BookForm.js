@@ -6,6 +6,7 @@ import {
   ADD_BOOK,
   FIND_BOOKS_BY_TITLE,
   ALL_BOOKS,
+  ADD_OWN_BOOK,
 } from "../../queries";
 import LibraryContext from "../../LibraryContext";
 
@@ -29,6 +30,7 @@ function BookForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     createBook({ variables: { title, author, published: 1337 } });
     setTitle("");
     setAuthor("");
