@@ -15,7 +15,7 @@ function calculateExercises(dailyExercises: number[], target: number): Result {
     !target ||
     isNaN(target)
   ) {
-    throw new Error("malformatted parameters");
+    throw new Error('malformatted parameters');
   }
 
   const average =
@@ -23,10 +23,10 @@ function calculateExercises(dailyExercises: number[], target: number): Result {
   const rating = average < target ? 1 : average === target ? 2 : 3;
   const ratingDescription =
     rating === 1
-      ? "not too bad but could be better"
+      ? 'not too bad but could be better'
       : rating === 2
-      ? "not too bad but could be better"
-      : "good job";
+      ? 'not too bad but could be better'
+      : 'good job';
 
   return {
     periodLength: dailyExercises.length,
