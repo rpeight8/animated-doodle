@@ -1,4 +1,4 @@
-function calculateBmi(height: number, weight: number): string {
+export default function calculateBmi(height: number, weight: number): string {
   if (isNaN(height) || isNaN(weight)) {
     throw new Error("Provided values were not numbers!");
   }
@@ -39,5 +39,3 @@ function calculateBmi(height: number, weight: number): string {
 
   return "Obese Class III (Very severely obese)";
 }
-
-console.log(calculateBmi(180, 74));
