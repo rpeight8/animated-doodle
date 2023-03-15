@@ -7,7 +7,7 @@ import { NotificationContext } from "../../providers/NotificationProvider";
 
 const LoginForm = () => {
   const client = useApolloClient();
-  const { user, setUser, logout } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const { setNotification } = useContext(NotificationContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -44,7 +44,8 @@ const LoginForm = () => {
   };
 
   const onLogout = () => {
-    logout();
+    setUser(null);
+    localStorage.removeItem("user");
     setNotification({
       message: "Logged out",
       type: "success",

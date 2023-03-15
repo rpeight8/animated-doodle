@@ -1,18 +1,15 @@
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
-import {
-  ALL_AUTHORS,
-  EDIT_BOOK,
-  ALL_BOOKS,
-  FIND_BOOKS_BY_TITLE,
-} from "../../queries";
+import { ALL_AUTHORS, EDIT_BOOK, ALL_BOOKS } from "../../queries";
 import { useQuery, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
 import { NotificationContext } from "../../providers/NotificationProvider";
+import { AuthContext } from "../../providers/AuthProvider";
 
 function BooksList() {
   const { setNotification } = useContext(NotificationContext);
+  const { user } = useContext(AuthContext);
   const [editBook, setEditBook] = useState({
     id: null,
     title: null,
@@ -162,6 +159,17 @@ function BooksList() {
                       }}
                     >
                       Delete
+                    </Button>
+                  )}
+                  {user && (
+                    <Button
+                      variant="light"
+                      size="sm"
+                      onClick={() => {
+                        setEditBook({ ...book });
+                      }}
+                    >
+                      Add to owned
                     </Button>
                   )}
                 </td>

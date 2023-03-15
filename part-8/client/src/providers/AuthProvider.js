@@ -16,13 +16,8 @@ export const AuthContextProvider = ({ children }) => {
   const [user, userDispatch] = useReducer(authReducer, initialErrorState);
 
   const setUser = (user) => {
-    userDispatch({ type: "SET_USER", payload: user });
     localStorage.setItem("user", JSON.stringify(user));
-  };
-
-  const logout = () => {
-    userDispatch({ type: "SET_USER", payload: null });
-    localStorage.removeItem("user");
+    userDispatch({ type: "SET_USER", payload: user });
   };
 
   return (
@@ -30,7 +25,6 @@ export const AuthContextProvider = ({ children }) => {
       value={{
         user,
         setUser,
-        logout,
       }}
     >
       {children}

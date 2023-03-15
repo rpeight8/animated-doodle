@@ -13,7 +13,15 @@ import LoginForm from "./components/LoginForm/LoginForm";
 import { AuthContext } from "./providers/AuthProvider";
 
 const App = () => {
-  const { user } = useContext(AuthContext);
+  const { user: currentUser, setUser } = useContext(AuthContext);
+  useEffect(() => {
+    if (!currentUser) {
+      const user = localStorage.getItem("user");
+      if (user) {
+        setUser(JSON.parse(user));
+      }
+    }
+  }, [currentUser, setUser]);
   return (
     <Container className="p-3">
       <TopNavbar />
@@ -22,7 +30,9 @@ const App = () => {
         <Route path="/" element={<div>Home</div>} />
         <Route path="books" element={<BookPage />} />
         <Route path="authors" element={<div>All authors</div>} />
-        {user && <Route path="ownedBooks" element={<div>My books</div>} />}
+        {currentUser && (
+          <Route path="ownedBooks" element={<div>My books</div>} />
+        )}
         <Route path="auth" element={<LoginForm />} />
         {}
       </Routes>
