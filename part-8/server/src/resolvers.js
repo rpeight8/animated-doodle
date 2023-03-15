@@ -23,6 +23,10 @@ const resolvers = {
     },
 
     allBooks: async (root, args, context) => {
+      if (args.title) {
+        return Book.find({ title: new RegExp(args.title) });
+      }
+
       return Book.find({});
     },
     findBook: async (root, args) => {

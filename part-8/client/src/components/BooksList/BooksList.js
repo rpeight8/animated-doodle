@@ -13,7 +13,7 @@ import { useContext, useState } from "react";
 import { NotificationContext } from "../../providers/NotificationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
 
-function BooksList() {
+function BooksList({ searchFor }) {
   const { setNotification } = useContext(NotificationContext);
   const { user } = useContext(AuthContext);
   const [editBook, setEditBook] = useState({
@@ -57,7 +57,12 @@ function BooksList() {
 
   let books = [],
     authors = [];
+  const bookVariables = {};
+  if (searchFor) {
+    bookVariables.title = searchFor;
+  }
   const { data: booksData, loading: booksLoading } = useQuery(ALL_BOOKS, {
+    variables: bookVariables,
     onError: (error) => {
       const respError = error.message
         ? error.message
@@ -81,9 +86,9 @@ function BooksList() {
     },
   });
 
-  if (booksLoading || authorsLoading) {
-    return <div>loading...</div>;
-  }
+  // if (booksLoading || authorsLoading) {
+  //   return <div>loading...</div>;
+  // }
 
   if (booksData && authorsData) {
     books = booksData.allBooks;
