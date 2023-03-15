@@ -89,3 +89,24 @@ export const ADD_BOOK_TO_OWNED = gql`
   }
   ${BOOK_DETAILS}
 `;
+
+export const REMOVE_BOOK_FROM_OWNED = gql`
+  mutation removeBookFromOwned($id: ID!) {
+    removeBookFromOwned(id: $id) {
+      username
+      books {
+        ...BookDetails
+      }
+    }
+  }
+  ${BOOK_DETAILS}
+`;
+
+export const OWNED_BOOKS = gql`
+  query ownedBooks {
+    ownedBooks {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`;

@@ -10,6 +10,7 @@ import TopNavbar from "./components/TopNavbar/TopNavbar";
 import Notification from "./components/Notification/Notification";
 import BookPage from "./components/BookPage/BookPage";
 import LoginForm from "./components/LoginForm/LoginForm";
+import OwnedBooksList from "./components/OwnedBooksList/OwnedBooksList";
 import { AuthContext } from "./providers/AuthProvider";
 
 const App = () => {
@@ -31,7 +32,7 @@ const App = () => {
         <Route path="books" element={<BookPage />} />
         <Route path="authors" element={<div>All authors</div>} />
         {currentUser && (
-          <Route path="ownedBooks" element={<div>My books</div>} />
+          <Route path="ownedBooks" element={<OwnedBooksList />} />
         )}
         <Route path="auth" element={<LoginForm />} />
         {}

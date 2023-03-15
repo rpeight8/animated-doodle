@@ -143,7 +143,63 @@ const resolvers = {
           });
         }
 
+        if (currentUser.books.find((b) => b.id === book.id)) {
+          throw new GraphQLError("Book already added to owned", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: [args.id],
+            },
+          });
+        }
+
         currentUser.books = currentUser.books.concat(book);
+        await currentUser.save();
+        return currentUser;
+      } catch (err) {
+        if (err instanceof GraphQLError) {
+          throw err;
+        }
+        throw new GraphQLError("Something went wrong", {
+          extensions: {
+            code: "INTERNAL_SERVER_ERROR",
+            err,
+          },
+        });
+      }
+    },
+
+    removeBookFromOwned: async (root, args, context) => {
+      try {
+        const currentUser = context.currentUser;
+
+        if (!currentUser) {
+          throw new GraphQLError("not authenticated", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+            },
+          });
+        }
+
+        const book = await Book.findById(args.id);
+        if (!book) {
+          throw new GraphQLError("Book does not exist", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: [args.id],
+            },
+          });
+        }
+
+        if (!currentUser.books.find((b) => b.id === book.id)) {
+          throw new GraphQLError("Book is not owned", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: [args.id],
+            },
+          });
+        }
+
+        currentUser.books = currentUser.books.filter((b) => b.id !== book.id);
         await currentUser.save();
         return currentUser;
       } catch (err) {

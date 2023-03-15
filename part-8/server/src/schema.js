@@ -25,7 +25,7 @@ const typeDefs = `
 		allBooks(title: String, author: String): [Book]!
 		findBook(title: String!): Book
 		findAuthor(name: String!): Author
-		ownedBooks: [Book]
+		ownedBooks: [Book]!
 		me: User
 	}
 
@@ -38,6 +38,9 @@ const typeDefs = `
 			password: String!
 		): Token
 		addBookToOwned(
+			id: ID!
+		): User
+		removeBookFromOwned(
 			id: ID!
 		): User
 		addBook(

@@ -4,16 +4,16 @@ import { Button } from "react-bootstrap";
 import {
   ALL_AUTHORS,
   EDIT_BOOK,
-  ALL_BOOKS,
-  ADD_BOOK_TO_OWNED,
   OWNED_BOOKS,
+  ALL_BOOKS,
+  REMOVE_BOOK_FROM_OWNED,
 } from "../../queries";
 import { useQuery, useMutation } from "@apollo/client";
 import { useContext, useState } from "react";
 import { NotificationContext } from "../../providers/NotificationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
 
-function BooksList() {
+function OwnedBooksList() {
   const { setNotification } = useContext(NotificationContext);
   const { user } = useContext(AuthContext);
   const [editBook, setEditBook] = useState({
@@ -23,7 +23,7 @@ function BooksList() {
   });
 
   const [editBookMutation] = useMutation(EDIT_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }],
+    refetchQueries: [{ query: OWNED_BOOKS }, { query: ALL_BOOKS }],
     onError: (error) => {
       const respError = error.message
         ? error.message
@@ -34,7 +34,7 @@ function BooksList() {
       });
     },
   });
-  const [addBookToOwnedMutation] = useMutation(ADD_BOOK_TO_OWNED, {
+  const [removeBookFromOwnedMutation] = useMutation(REMOVE_BOOK_FROM_OWNED, {
     refetchQueries: [{ query: OWNED_BOOKS }],
     onError: (error) => {
       const respError = error.message
@@ -47,8 +47,8 @@ function BooksList() {
     },
   });
 
-  const onAddBookToOwndedClick = (book) => {
-    addBookToOwnedMutation({
+  const onRemoveBookFromOwndedClick = (book) => {
+    removeBookFromOwnedMutation({
       variables: {
         id: book.id,
       },
@@ -57,7 +57,7 @@ function BooksList() {
 
   let books = [],
     authors = [];
-  const { data: booksData, loading: booksLoading } = useQuery(ALL_BOOKS, {
+  const { data: booksData, loading: booksLoading } = useQuery(OWNED_BOOKS, {
     onError: (error) => {
       const respError = error.message
         ? error.message
@@ -86,7 +86,7 @@ function BooksList() {
   }
 
   if (booksData && authorsData) {
-    books = booksData.allBooks;
+    books = booksData.ownedBooks;
     authors = authorsData.allAuthors;
   }
 
@@ -179,7 +179,7 @@ function BooksList() {
                       Edit
                     </Button>
                   )}
-                  {(editBook.id === book.id && (
+                  {editBook.id === book.id && (
                     <Button
                       variant="light"
                       size="sm"
@@ -190,30 +190,17 @@ function BooksList() {
                     >
                       Cancel
                     </Button>
-                  )) || (
-                    <Button
-                      variant="light"
-                      size="sm"
-                      className="mx-2"
-                      onClick={() => {
-                        turnOffEdit();
-                      }}
-                    >
-                      Delete
-                    </Button>
                   )}
-                  {user && (
-                    <Button
-                      variant="light"
-                      size="sm"
-                      className="mx-2"
-                      onClick={() => {
-                        onAddBookToOwndedClick(book);
-                      }}
-                    >
-                      Add to owned
-                    </Button>
-                  )}
+                  <Button
+                    variant="light"
+                    size="sm"
+                    className="mx-2"
+                    onClick={() => {
+                      onRemoveBookFromOwndedClick(book);
+                    }}
+                  >
+                    Remove from owned
+                  </Button>
                 </td>
               </tr>
             );
@@ -224,4 +211,4 @@ function BooksList() {
   );
 }
 
-export default BooksList;
+export default OwnedBooksList;
