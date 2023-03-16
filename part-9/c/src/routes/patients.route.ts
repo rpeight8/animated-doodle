@@ -1,14 +1,34 @@
 import express from 'express';
-import { getEntries, addEntry } from '../services/patients.service';
+import { getEntries, addEntry, findById } from '../services/patients.service';
+import { Patient } from '../types';
 
 const router = express.Router();
 
-router.get('/', (_req, res) => {
-  res.json(getEntries());
-});
+router
+  .route('/')
+  .get((_req, res) => {
+    res.json(getEntries());
+  })
+  .post((req, res) => {
+    const { name, dateOfBirth, ssn, gender, occupation } = req.body as Patient;
+    const newPatientEntry = addEntry({
+      name,
+      dateOfBirth,
+      ssn,
+      gender,
+      occupation,
+    });
 
-router.post('/', (_req, res) => {
-  res.send('Saving a patient!');
+    res.json(newPatientEntry);
+  });
+
+router.route('/:id').get((req, res) => {
+  const patient = findById(req.params.id);
+  if (patient) {
+    res.json(patient);
+  } else {
+    res.status(404).end();
+  }
 });
 
 export default router;
